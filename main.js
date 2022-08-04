@@ -5,28 +5,23 @@
 // \\ |//,' __
 // (")(_)-"()))=-
 //    (\\
-// 
+// alsidfhjalkj
 
 // Some debug tools:
 var db = require('tools.debug');
 
-var runHerald = require('herald');
+var runCensus = require('counselor.census');
+var runQueen = require('ai.queen')
 
 module.exports.loop = function () {
     db.vLog("~~~~~~~~~~~~~~~~"+ Game.time+"~~~~~~~~~~~~~~~~");
     
-    var heraldReport = runHerald();
+    runCensus();
+    var queenObjects = Memory.census['queenObject'];
 
-    var empressOrders = runEmpress(heraldReport);
-
-    for (var queenName in heraldReport['queenObject']){
-    	var queenObj = heraldReport['queenObject'][queenName];
-        var empressordersForQueen = null;
-        if (empressOrders[queenName]){
-            empressordersForQueen = empressOrders[queenName];
-        }
-    	runQueen(queenName, empressordersForQueen, queenObj);
-        runCarpender(queenName, heraldReport['queenObject'][queenName]);
+    for (var queenName in queenObjects){
+    	var queenObj = queenObjects[queenName]['queenObject'];
+    	runQueen(queenName, queenObj);
     }
 
     db.vLog("~~~~~~~~Final Log~~~~~~~~");
