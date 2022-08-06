@@ -12,8 +12,11 @@ function getBody(role, level){
     switch (role){
         case "starter": return getBody_Starter(level);
         case "harvester": return getBody_Harvester(level);
+        case "worker": return getBody_Worker(level);
     }
 }
+
+// Econ Bees:
 
 function getBody_Starter(level){
     switch (level){
@@ -32,5 +35,30 @@ function getBody_Harvester(level){
                         WORK, WORK, WORK, WORK, WORK];
         case 4: return [MOVE, MOVE, MOVE, MOVE, MOVE, 
                         WORK, WORK, WORK, WORK, WORK];
+    }
+}
+
+function getBody_Worker(level){
+    switch (level){
+        case 1: return [
+                        CARRY, 
+                        MOVE, 
+                        WORK
+                        ]
+        case 2: return [
+                        CARRY, CARRY, CARRY,
+                        WORK, WORK, 
+                        MOVE, MOVE, MOVE
+                        ];
+        case 3: return [
+                        CARRY, CARRY, CARRY, CARRY, CARRY,
+                        WORK, WORK, WORK, WORK,
+                        MOVE, MOVE, MOVE
+                        ];
+        case 4: return [
+                        CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                        WORK, WORK, WORK, WORK, WORK,
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+                        ];
     }
 }

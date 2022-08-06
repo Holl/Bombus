@@ -8,14 +8,12 @@ var noTanks = 4;
 
 var creepCreator = require('counselor.beeSpawner');
 var db = require('tools.debug');
-var starterFunction = require('bee.starter');
-// var captureFunciton = require('bee.captor');
-var harvesterFunction = require('bee.harvester');
 var common = require('tools.commonFunctions');
-// var maintenanceBeesFunction = require('bees.maintenance');
-// var reconnaissanceBeesFunction = require('bees.reconnaissance');
-// var defenseBeesFunction = require('bees.defense');
-// var attackBeesFunction = require('bees.attack'); asdfasdf
+
+var starterFunction = require('bee.starter');
+var harvesterFunction = require('bee.harvester');
+var workerFunction = require('bee.worker');
+
 
 
 
@@ -24,17 +22,14 @@ module.exports = function(queenName){
     db.vLog("~~~~~~~~" + queenName + "~~~~~~~~");
 
     var phase = determineQueenPhase(queenName);
-
     var inactiveSpawns = Memory.census.queenObject[queenName].inactiveSpawns;
     var energyMax = Memory.census.queenObject[queenName].energyMax;
     
     if(inactiveSpawns.length > 0){
 
         var beeLevel = calculateLevel(energyMax, queenName);
-
         db.vLog("Bee level is " + beeLevel);        
-
-        normalEconomySpawning(queenName, beeLevel);
+        normalEconomySpawning(queenName, beeLevel, phase);
     }
     else{
         db.vLog("There are no inactive spawns.")
@@ -42,13 +37,7 @@ module.exports = function(queenName){
 
     starterFunction(queenName, Memory.census.queenObject[queenName]);
     harvesterFunction(queenName, Memory.census.queenObject[queenName]);
-    // maintenanceBeesFunction(queenName, queenObject);
-    // defenseBeesFunction(queenName, queenObject, empressOrders);
-    
-    // captureFunciton(queenName, queenObject, empressOrders);
-    // reconnaissanceBeesFunction(queenName, queenObject, empressOrders);
-    // defnseFunction(queenName, queenObject, empressOrders);
-    // attackBeesFunction(queenName, queenObject, empressOrders);
+    workerFunction(queenName, Memory.census.queenObject[queenName]);
     
 }
 
@@ -152,7 +141,7 @@ function captureSpawning(queenName, queenObject, captureRoom, beeLevel){
     }
 }
 
-function normalEconomySpawning(queenName, beeLevel){
+function normalEconomySpawning(queenName, beeLevel, phase){
 
     var queenObject = Memory.census.queenObject[queenName];
     var bees = queenObject.bees;
@@ -203,7 +192,6 @@ function normalEconomySpawning(queenName, beeLevel){
     // TOPDO: The following two loops seem REALLY similar,
     // and I probably have to do it again.  Make them wet
 
-
     // Specialization is a key concept in keeping things as simple and CPU efficent as possible.
     // When we start any room- basically any room from levels 1-4- we don't have any place to put
     // energy that's very efficent except for the conatiners.  Therefore the best thing any bee
@@ -213,7 +201,6 @@ function normalEconomySpawning(queenName, beeLevel){
     // have the bees dedicate themselves to one task.
 
     var storage = queenObject.storage;
-
 
     // So what isn't being mined?  unharvestSourceArray is an array of the leftover,
     // unmined sources.
@@ -274,9 +261,9 @@ function normalEconomySpawning(queenName, beeLevel){
             // Otherwise, if hauledSourceObject doesn't have a value withe the key
             // of source, we know that source doesn't have haulers.
             // If it does, but he count is below our const, we still need more.
-            db.vLog("Spawning Hauler.");
+            db.vLog("Spawning Worker.");
             creepCreator(queenObject['inactiveSpawns'][0], 
-                'hauler',
+                'worker',
                 beeLevel, 
                 queenName,
                 {'source':localSources[source]}

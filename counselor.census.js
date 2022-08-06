@@ -211,15 +211,15 @@ module.exports = function(){
             // then we no longer need to worry about it.
 
             if (bee.memory.deliveryTargetID){
-                if (Memory['census']['queenObject'][queenName]['thirstyStructures']){
-                    var queenThirstyStructures = Memory['census']['queenObject'][queenName]['thirstyStructures'];
+                if (Memory['census']['queenObject'][beesQueen]['thirstyStructures']){
+                    var queenThirstyStructures = Memory['census']['queenObject'][beesQueen]['thirstyStructures'];
                     for (var struct in queenThirstyStructures){
                         if (queenThirstyStructures[struct]['id'] == bee.memory.deliveryTargetID){
                             if (queenThirstyStructures[struct]['thirst'] < bee['carry']['energy']){
-                                Memory['census']['queenObject'][queenName]['thirstyStructures'].splice(struct,1);
+                                Memory['census']['queenObject'][beesQueen]['thirstyStructures'].splice(struct,1);
                             }
                             else{
-                                Memory['census']['queenObject'][queenName]['thirstyStructures'][struct]['thirst'] = queenThirstyStructures[struct]['thirst'] - bee['carry']['energy'];
+                                Memory['census']['queenObject'][beesQueen]['thirstyStructures'][struct]['thirst'] = queenThirstyStructures[struct]['thirst'] - bee['carry']['energy'];
                             }
                         }
                     }
@@ -230,17 +230,19 @@ module.exports = function(){
                 for (var source in localSources){
                     if (bee.memory.source == localSources[source]){
                         if (beesRole == 'harvester'){
-                            var oldArray = queenObject[beesQueen].harvestedSources.push(bee.memory.source)
+                            queenObject[beesQueen].harvestedSources.push(bee.memory.source);
                         }
-                        // else if (beesRole == 'hauler' || beesRole == 'shipper'){
-                        //     var hauledSourceObject = Memory.census.queenObject[beesQueen].hauledSourceObject;
-                        //     if(!hauledSourceObject.localSources.source){
-                        //         Memory.census.queenObject[beesQueen].hauledSourceObject = [bee];
-                        //     }
-                        //     else{
-                        //         Memory.census.queenObject[beesQueen].hauledSourceObject.push(bee)
-                        //     }
-                        // }
+                        else if (beesRole == 'worker'){
+                            var hauledSourceObject = queenObject[beesQueen].hauledSourceObject;
+                            if(!hauledSourceObject[localSources[source]]){
+                                console.log("This should happen")
+                                queenObject[beesQueen].hauledSourceObject[localSources[source]] = [bee.id];
+                            }
+                            else{
+                                console.log(queenObject[beesQueen].hauledSourceObject[localSources[source]])
+                                queenObject[beesQueen].hauledSourceObject[localSources[source]].push(bee.id)
+                            }
+                        }
                     }
                 }
             }
