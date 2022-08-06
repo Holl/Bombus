@@ -9,8 +9,9 @@ module.exports = function(queenName, queenObj){
     // They really just grab some energy from a source to get us started.
     // Really super ineffective.
 
-    for(var bee in queenObj['bees']['starter']){
-        var beeName = queenObj['bees']['starter'][bee];
+    var starterArray = Memory.census.queenObject[queenName].bees.starter;
+    for(var bee in starterArray){
+        var beeName = starterArray[bee];
         beeFunc.starterMining(beeName, queenObj);
     }
 }

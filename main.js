@@ -20,8 +20,7 @@ module.exports.loop = function () {
     var queenObjects = Memory.census['queenObject'];
 
     for (var queenName in queenObjects){
-    	var queenObj = queenObjects[queenName]['queenObject'];
-    	runQueen(queenName, queenObj);
+    	runQueen(queenName);
     }
 
     db.vLog("~~~~~~~~Final Log~~~~~~~~");

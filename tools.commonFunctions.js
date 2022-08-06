@@ -1,4 +1,4 @@
-var db = require('debugTools');
+var db = require('tools.debug');
 
 module.exports = {
 	destroyNonOwnedBuildings(roomName){
@@ -11,6 +11,9 @@ module.exports = {
 				roomStruct[build].destroy();
 			}
 		}
+	},
+	getMemoryByQueenName(queenName){
+		return Memory['census']['queenObject'][queenName];
 	},
 	doesObjectHaveKeysOfArray(array, obj){
 		return array.every(item => obj.hasOwnProperty(item));

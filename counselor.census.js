@@ -17,7 +17,6 @@ module.exports = function(){
     var empireObject = {};
 
 	var beeArray = [];
-	var queenObject = {};
 	var freeBeeArray = [];
     var deadQueenBees = [];
 
@@ -56,7 +55,7 @@ module.exports = function(){
                 }
             });
 
-            // "Thirst" is a fun concept used to sort all the buildings
+            // "Thirst" is a concept used to sort all the buildings
             // in terms of how much energy they need.  The thirst array
             // we're building here is simply all the buildings which require energy
             // and have none.
@@ -127,6 +126,8 @@ module.exports = function(){
                 "energyNow": Game.spawns[spawn].room.energyAvailable,
                 "energyMax": Game.spawns[spawn].room.energyCapacityAvailable,
                 "localSources": localSources,
+                "harvestedSources": [],
+                "hauledSourceObject" : {},
                 "spawns": spawnNameArrray,
                 "inactiveSpawns": inactiveSpawnNameArray,
                 "energyStructuers": energyStructuers,
@@ -157,9 +158,14 @@ module.exports = function(){
         }
     }
 
+    var harvestedSourcesArray = [];
+
 	for (var creep in Game.creeps){
+        var bee = Game.creeps[creep];
         var beesQueen = Game.creeps[creep].memory.queen;
         var beesRole = Game.creeps[creep].memory.role;
+
+        
         
         // So if the Bee has a queen...
 		if (beesQueen){
@@ -219,6 +225,26 @@ module.exports = function(){
                     }
                 }
             }
+            if (bee.memory.source){
+                var localSources = queenObject[beesQueen].localSources;
+                for (var source in localSources){
+                    if (bee.memory.source == localSources[source]){
+                        if (beesRole == 'harvester'){
+                            var oldArray = queenObject[beesQueen].harvestedSources.push(bee.memory.source)
+                        }
+                        // else if (beesRole == 'hauler' || beesRole == 'shipper'){
+                        //     var hauledSourceObject = Memory.census.queenObject[beesQueen].hauledSourceObject;
+                        //     if(!hauledSourceObject.localSources.source){
+                        //         Memory.census.queenObject[beesQueen].hauledSourceObject = [bee];
+                        //     }
+                        //     else{
+                        //         Memory.census.queenObject[beesQueen].hauledSourceObject.push(bee)
+                        //     }
+                        // }
+                    }
+                }
+            }
+            
 		}
 		else{
 
@@ -228,9 +254,10 @@ module.exports = function(){
 
 			freeBeeArray.push(creep);
 		}
-    };
 
     
+    };
+
     // Build and return this object so the empress and queens can take a look.
 
     empireObject['gcl'] = Game.gcl;

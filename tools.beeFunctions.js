@@ -1,4 +1,5 @@
-var db = require('debugTools');
+var db = require('tools.debug');
+var common = require('tools.commonFunctions');
 
 module.exports = {
 	starterMining(beeName, queenObj){
@@ -31,6 +32,28 @@ module.exports = {
 	        bee.moveTo(bee.room.controller);
 	    }
 	},
+    mineSource(bee, source){
+        if(bee.harvest(source) == ERR_NOT_IN_RANGE || bee.harvest(source) == ERR_BUSY) {
+            if (bee.memory.pickupID){
+                var container = Game.getObjectById(bee.memory.pickupID);
+                bee.moveTo(container);
+            }
+            else{
+                bee.memory.pickupID = common.findContainerIDFromSource(source.id);
+                bee.moveTo(source);
+            }
+            
+        }
+        else{
+            var container = Game.getObjectById(bee.memory.pickupID);
+            bee.moveTo(container);
+            bee.harvest(source);
+            if(!bee.memory.container){
+                bee.room.createConstructionSite(bee.pos.x, bee.pos.y, STRUCTURE_CONTAINER);
+                bee.memory.container = 1;
+            }
+        }
+    }
 }
 
 

@@ -11,6 +11,7 @@ module.exports = function(spawnName, roleName, creepLevel, queenName, metaData){
 function getBody(role, level){
     switch (role){
         case "starter": return getBody_Starter(level);
+        case "harvester": return getBody_Harvester(level);
     }
 }
 
@@ -21,3 +22,15 @@ function getBody_Starter(level){
     }
 }
 
+function getBody_Harvester(level){
+    switch (level){
+        case 1: return [MOVE, 
+                        WORK, WORK];
+        case 2: return [MOVE, 
+                        WORK, WORK, WORK, WORK];
+        case 3: return [MOVE, 
+                        WORK, WORK, WORK, WORK, WORK];
+        case 4: return [MOVE, MOVE, MOVE, MOVE, MOVE, 
+                        WORK, WORK, WORK, WORK, WORK];
+    }
+}

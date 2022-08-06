@@ -8,9 +8,10 @@ var noTanks = 4;
 
 var creepCreator = require('counselor.beeSpawner');
 var db = require('tools.debug');
+var starterFunction = require('bee.starter');
 // var captureFunciton = require('bee.captor');
-// var econBeesFunction = require('bees.econ');
-// var common = require('commonFunctions');
+var harvesterFunction = require('bee.harvester');
+var common = require('tools.commonFunctions');
 // var maintenanceBeesFunction = require('bees.maintenance');
 // var reconnaissanceBeesFunction = require('bees.reconnaissance');
 // var defenseBeesFunction = require('bees.defense');
@@ -18,40 +19,65 @@ var db = require('tools.debug');
 
 
 
-module.exports = function(queenName, queenObj){
+module.exports = function(queenName){
 
     db.vLog("~~~~~~~~" + queenName + "~~~~~~~~");
-    db.vLog("Level "+queenObj['level']+".")
-    db.vLog("Hostile power is currently " + queenObj['hostilePower'] +".");
-    db.vLog("Currently "+queenObj["energyNow"]+" out of a possible "+queenObj["energyMax"]+ " energy.");
-    
-    if(queenObj['inactiveSpawns'].length > 0){
 
-        var beeLevel = calculateLevel(queenObj['energyMax'], queenName);
+    var phase = determineQueenPhase(queenName);
+
+    var inactiveSpawns = Memory.census.queenObject[queenName].inactiveSpawns;
+    var energyMax = Memory.census.queenObject[queenName].energyMax;
+    
+    if(inactiveSpawns.length > 0){
+
+        var beeLevel = calculateLevel(energyMax, queenName);
 
         db.vLog("Bee level is " + beeLevel);        
 
-        normalEconomySpawning(queenName, queenObj, beeLevel);
+        normalEconomySpawning(queenName, beeLevel);
     }
     else{
         db.vLog("There are no inactive spawns.")
     }
 
-    econBeesFunction(queenName, queenObj);
-    // maintenanceBeesFunction(queenName, queenObj);
-    // defenseBeesFunction(queenName, queenObj, empressOrders);
+    starterFunction(queenName, Memory.census.queenObject[queenName]);
+    harvesterFunction(queenName, Memory.census.queenObject[queenName]);
+    // maintenanceBeesFunction(queenName, queenObject);
+    // defenseBeesFunction(queenName, queenObject, empressOrders);
     
-    // captureFunciton(queenName, queenObj, empressOrders);
-    // reconnaissanceBeesFunction(queenName, queenObj, empressOrders);
-    // defnseFunction(queenName, queenObj, empressOrders);
-    // attackBeesFunction(queenName, queenObj, empressOrders);
+    // captureFunciton(queenName, queenObject, empressOrders);
+    // reconnaissanceBeesFunction(queenName, queenObject, empressOrders);
+    // defnseFunction(queenName, queenObject, empressOrders);
+    // attackBeesFunction(queenName, queenObject, empressOrders);
     
 }
 
-function attackSpawning(queenName, queenObj, beeLevel, empressOrders){
+function determineQueenPhase(queenName){
+
+    // A queen has a few different phases depending on where we are
+    // in the process of building a hive.
+
+    var queenLevel = Memory.census.queenObject[queenName].level;
+    var storage = Memory.census.queenObject[queenName].storage;
+
+    // If we're below level 4, or we don't have a storage,
+    // we're still in a growth phase and we should consider it 
+    // "Spring".  
+    
+    if (queenLevel < 4 || storage == false){
+        return "spring";
+    }
+    // Otherwise, if we ahve those things, we're ready for more specalized 
+    // bees and we're in "Summer"
+    else{
+        return "summer";
+    }
+
+}
+
+function attackSpawning(queenName, queenObject, beeLevel, empressOrders){
     if (empressOrders && empressOrders.order == "flightAttack"){
         console.log(empressOrders.unit);
-        // console.log("Hewwo.");
     }
 }
 
@@ -74,11 +100,11 @@ function pickExpandRoom(roomsArray, scoutData){
     return topPick;
 }
 
-function reconnaissanceSpawning(queenName, queenObj, beeLevel, empressOrders){
-    var scoutArray = queenObj['bees']['scout'];
+function reconnaissanceSpawning(queenName, queenObject, beeLevel, empressOrders){
+    var scoutArray = queenObject['bees']['scout'];
     if (scoutArray == undefined || scoutArray.length < 1){
         db.vLog("Spawning Scout.");
-        creepCreator(queenObj['inactiveSpawns'][0], 
+        creepCreator(queenObject['inactiveSpawns'][0], 
                             'scout', 
                             1,
                             queenName
@@ -87,16 +113,16 @@ function reconnaissanceSpawning(queenName, queenObj, beeLevel, empressOrders){
     }
 }
 
-function captureSpawning(queenName, queenObj, captureRoom, beeLevel){
+function captureSpawning(queenName, queenObject, captureRoom, beeLevel){
     if (beeLevel > 2){
         var needCaptureBool = false;
         var roomObj = Game.rooms[captureRoom];
         if (roomObj == undefined || roomObj.controller.my != true){
             needCaptureBool = true
         }
-        if(typeof queenObj['bees']['captor'] == 'undefined' && needCaptureBool){
+        if(typeof queenObject['bees']['captor'] == 'undefined' && needCaptureBool){
             db.vLog("Spawning Captor.");
-            creepCreator(queenObj['inactiveSpawns'][0], 
+            creepCreator(queenObject['inactiveSpawns'][0], 
                                         'captor', 
                                         beeLevel,
                                         queenName,
@@ -104,10 +130,10 @@ function captureSpawning(queenName, queenObj, captureRoom, beeLevel){
                                     );
             return;
         }
-        if (typeof queenObj['bees']['captorBuilder'] == 'undefined' ||
-            queenObj['bees']['captorBuilder'].length < 4){
+        if (typeof queenObject['bees']['captorBuilder'] == 'undefined' ||
+            queenObject['bees']['captorBuilder'].length < 4){
             db.vLog("Spawning Captor Builder.");
-            creepCreator(queenObj['inactiveSpawns'][0], 
+            creepCreator(queenObject['inactiveSpawns'][0], 
                                         'captorBuilder', 
                                         beeLevel,
                                         queenName,
@@ -115,9 +141,8 @@ function captureSpawning(queenName, queenObj, captureRoom, beeLevel){
                                     );
             return;
         }
-        if (roomObj && roomObj.find(FIND_HOSTILE_CREEPS).length > 0 && (queenObj['bees']['defender'] == undefined || queenObj['bees']['defender'] < 2)){
-            console.log("Hi")
-            creepCreator(queenObj['inactiveSpawns'][0], 
+        if (roomObj && roomObj.find(FIND_HOSTILE_CREEPS).length > 0 && (queenObject['bees']['defender'] == undefined || queenObject['bees']['defender'] < 2)){
+            creepCreator(queenObject['inactiveSpawns'][0], 
                                         'defender', 
                                         beeLevel,
                                         queenName,
@@ -127,15 +152,22 @@ function captureSpawning(queenName, queenObj, captureRoom, beeLevel){
     }
 }
 
-function normalEconomySpawning(queenName, queenObj, beeLevel){
+function normalEconomySpawning(queenName, beeLevel){
 
-    if (_.isEmpty(queenObj['bees'])){
+    var queenObject = Memory.census.queenObject[queenName];
+    var bees = queenObject.bees;
+    var energyNow = queenObject.energyNow;
+    var localSources = queenObject.localSources;
+    var queenLevel = queenObject.level;
+    var inactiveSpawns = queenObject.inactiveSpawns;
+
+    if (_.isEmpty(bees)){
         // This runs only if we have 0 bees anywhere.
-        if (beeLevel == 1 || queenObj['energyNow'] < 500){
+        if (beeLevel == 1 || energyNow < 500){
             // This will run if our creep level is 1, meaning that we're probably starting off
             // or things are really bad.
             db.vLog("Spawning starter.");
-            creepCreator(queenObj['inactiveSpawns'][0], "starter", 1, queenName);
+            creepCreator(inactiveSpawns[0], "starter", 1, queenName);
             return;
         }
         else{
@@ -150,22 +182,19 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
     // So from the Herald's queen object, get the array of 
     // bees that exist with harvester and hauler tasks.
 
-    var harvesterArray = queenObj['bees']['harvester'];
-    var haulerArray = queenObj['bees']['hauler'];
-    var localSources = queenObj['localSources'];
+    var harvesterArray = bees.harvester;
+    var haulerArray = bees.hauler;
 
-    var shipperArray = queenObj['bees']['shipper'];
-    var droneArray = queenObj['bees']['drone'];
-    var upgraderArray = queenObj['bees']['upgrader'];
+    var shipperArray = bees.shipper;
+    var droneArray = bees.drone;
+    var upgraderArray = bees.upgrader;
 
-    var tankArray = queenObj['bees']['tank'];
-    var healerArray = queenObj['bees']['healer'];
+    var tankArray = bees.tank;
+    var healerArray = bees.healer;
 
     var harvestedSourceArray=[];
     var hauledSourceObject={};
     var shippedSourceObject={};
-
-    var queenLevel = queenObj['level'];
 
     // Loop through all of our harvesters.
     // The result of this is an array (harvestedSourceArray) of all the sources
@@ -173,14 +202,6 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
 
     // TOPDO: The following two loops seem REALLY similar,
     // and I probably have to do it again.  Make them wet
-
-    for (var harvester in harvesterArray){
-        for (source in localSources){
-            if (Game.creeps[harvesterArray[harvester]].memory.source == localSources[source]){
-                harvestedSourceArray.push(localSources[source]);
-            }
-        }
-    }
 
 
     // Specialization is a key concept in keeping things as simple and CPU efficent as possible.
@@ -191,39 +212,13 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
     // That changes with Storage, however.  Once built, we have 1,000,000 units of storage and we can
     // have the bees dedicate themselves to one task.
 
-    var storage = queenObj['storage'];
+    var storage = queenObject.storage;
 
-    // The following is copy/paste.
-    // TODO: Move into funct.
-
-    for (var hauler in haulerArray){
-        for (source in localSources){
-            if (Game.creeps[haulerArray[hauler]].memory.source == localSources[source]){
-                if(!hauledSourceObject[localSources[source]]){
-                     hauledSourceObject[localSources[source]] =[haulerArray[hauler]];
-                }
-                else{
-                     hauledSourceObject[localSources[source]].push(haulerArray[hauler])
-                }
-            }
-        }
-    }
-
-    for (var shipper in shipperArray){
-        for (source in localSources){
-            if (Game.creeps[shipperArray[shipper]].memory.source == localSources[source]){
-                if(!shippedSourceObject[localSources[source]]){
-                     shippedSourceObject[localSources[source]] =[shipperArray[shipper]];
-                }
-                else{
-                     shippedSourceObject[localSources[source]].push(shipperArray[shipper])
-                }
-            }
-        }
-    }
 
     // So what isn't being mined?  unharvestSourceArray is an array of the leftover,
     // unmined sources.
+    var localSources = queenObject.localSources;
+    var harvestedSourceArray = queenObject.harvestedSources;
     var unharvestedSourceArray = _.difference(localSources, harvestedSourceArray);
 
     // Which should give us everyting we need.
@@ -235,21 +230,9 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
             // Return cuz we're done.
             db.vLog("Spawning Harvester.");
             var container = common.findContainerIDFromSource(localSources[source]);
-
-            // Emergency lvl 1 harvester, in case there isn't the energy to support a full one?
-            // 
-            // creepCreator(queenObj['inactiveSpawns'][0], 
-            //                     'harvester', 
-            //                     1,
-            //                     queenName,
-            //                     {'source':localSources[source],
-            //                     'pickupID': container.id,
-            //                     'container': 1
-            //                     }
-            //                 );
             
             if (container){
-                creepCreator(queenObj['inactiveSpawns'][0], 
+                creepCreator(queenObject.inactiveSpawns[0], 
                                 'harvester', 
                                 beeLevel,
                                 queenName,
@@ -261,7 +244,7 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
                 return;
             }
             else{
-                 creepCreator(queenObj['inactiveSpawns'][0], 
+                 creepCreator(queenObject.inactiveSpawns[0], 
                                 'harvester', 
                                 beeLevel,
                                 queenName,
@@ -276,7 +259,7 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
             if(!shippedSourceObject[localSources[source]] || 
                 shippedSourceObject[localSources[source]].length < noShipper){
                 db.vLog("Spawning Shipper.");
-                creepCreator(queenObj['inactiveSpawns'][0], 
+                creepCreator(queenObject['inactiveSpawns'][0], 
                                     'shipper', 
                                     beeLevel,
                                     queenName,
@@ -292,7 +275,7 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
             // of source, we know that source doesn't have haulers.
             // If it does, but he count is below our const, we still need more.
             db.vLog("Spawning Hauler.");
-            creepCreator(queenObj['inactiveSpawns'][0], 
+            creepCreator(queenObject['inactiveSpawns'][0], 
                 'hauler',
                 beeLevel, 
                 queenName,
@@ -302,7 +285,7 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
         }
         else if (upgraderArray == undefined || upgraderArray.length < 1){
             db.vLog("Spawning Upgrader.");
-            creepCreator(queenObj['inactiveSpawns'][0], 
+            creepCreator(queenObject['inactiveSpawns'][0], 
                                 'upgrader', 
                                 1,
                                 queenName
@@ -324,9 +307,9 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
             noUpgraders++;
         }
     }
-    if (droneArray == undefined && queenObj["energyNow"] < 301){
+    if (droneArray == undefined && queenObject["energyNow"] < 301){
         db.vLog("Spawning Lvl 1 Drone.");
-        creepCreator(queenObj['inactiveSpawns'][0], 
+        creepCreator(queenObject['inactiveSpawns'][0], 
                             'drone', 
                             1,
                             queenName
@@ -335,7 +318,7 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
     }
     else if ((droneArray == undefined || droneArray.length < noDrones) && queenLevel >=4){
         db.vLog("Spawning big Drone.");
-        creepCreator(queenObj['inactiveSpawns'][0], 
+        creepCreator(queenObject['inactiveSpawns'][0], 
                             'drone', 
                             beeLevel,
                             queenName
@@ -344,7 +327,7 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
     }
     else if (upgraderArray == undefined){
         db.vLog("Spawning Upgrader.");
-        creepCreator(queenObj['inactiveSpawns'][0], 
+        creepCreator(queenObject['inactiveSpawns'][0], 
                             'upgrader', 
                             1,
                             queenName
@@ -353,7 +336,7 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
     }
     else if (upgraderArray.length < noUpgraders){
         db.vLog("Spawning Upgrader.  We should spin up " + noUpgraders);
-        creepCreator(queenObj['inactiveSpawns'][0], 
+        creepCreator(queenObject['inactiveSpawns'][0], 
                             'upgrader', 
                             beeLevel,
                             queenName
@@ -362,15 +345,15 @@ function normalEconomySpawning(queenName, queenObj, beeLevel){
     }
 };
 
-function maintenanceSpawning(queenName, queenObj, beeLevel){
+function maintenanceSpawning(queenName, queenObject, beeLevel){
 
-    var queenLevel = queenObj['level'];
+    var queenLevel = queenObject['level'];
     // var noWorkers = queenLevel - 1;
     var noWorkers = 1;
 
-    if (queenObj['bees']['worker'] && queenObj['bees']['worker'].length < noWorkers || (!queenObj['bees']['worker'] && noWorkers > 0)){
+    if (queenObject['bees']['worker'] && queenObject['bees']['worker'].length < noWorkers || (!queenObject['bees']['worker'] && noWorkers > 0)){
         db.vLog("Spawning a worker.");
-        creepCreator(queenObj['inactiveSpawns'][0], 
+        creepCreator(queenObject['inactiveSpawns'][0], 
                                 'worker', 
                                 beeLevel,
                                 queenName
@@ -379,12 +362,11 @@ function maintenanceSpawning(queenName, queenObj, beeLevel){
     return;
 }
 
-function defnseFunction(queenName, queenObj){
+function defnseFunction(queenName, queenObject){
     if (true){
         var hostiles = Game.rooms[queenName].find(FIND_HOSTILE_CREEPS);
         if(hostiles.length > 0) {
             var username = hostiles[0].owner.username; 
-            console.log(username != 'staxwell' && username != 'Huggable_Shark');
             if (username != 'staxwell'){ 
                 // Game.notify(`User ${username} spotted in room ${queenName}`);
             } 
