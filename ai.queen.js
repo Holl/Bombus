@@ -10,10 +10,13 @@ var creepCreator = require('counselor.beeSpawner');
 var db = require('tools.debug');
 var common = require('tools.commonFunctions');
 
+var runarchitect = require('counselor.architect');
+
 var starterFunction = require('bee.starter');
 var harvesterFunction = require('bee.harvester');
 var workerFunction = require('bee.worker');
 var carpenterFunction = require('bee.carpenter');
+var upgraderFunction = require('bee.upgrader');
 
 
 module.exports = function(queenName){
@@ -40,6 +43,10 @@ module.exports = function(queenName){
     starterFunction(queenName, Memory.census.queenObject[queenName]);
     harvesterFunction(queenName, Memory.census.queenObject[queenName]);
     workerFunction(queenName, Memory.census.queenObject[queenName]);
+    carpenterFunction(queenName, Memory.census.queenObject[queenName]);
+    upgraderFunction(queenName, Memory.census.queenObject[queenName]);
+
+    runarchitect(queenName);
     
 }
 
@@ -223,6 +230,7 @@ function maintenanceSpawning(queenName, beeLevel, phase){
                                     beeLevel,
                                     queenName
                                 );
+            return;
         }
     }
     return;
