@@ -22,6 +22,9 @@ module.exports = {
 	    if(bee.upgradeController(bee.room.controller) == ERR_NOT_IN_RANGE) {
 	        bee.moveTo(bee.room.controller);
 	    }
+		else{
+			bee.signController(bee.room.controller, "Reworking code from scratch.  Really quite harmless.");
+		}
 	},
 	findContainerIDFromSource(sourceID){
 	    var sourcePos = Game.getObjectById(sourceID).pos
