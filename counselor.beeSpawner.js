@@ -13,6 +13,8 @@ function getBody(role, level){
         case "starter": return getBody_Starter(level);
         case "harvester": return getBody_Harvester(level);
         case "worker": return getBody_Worker(level);
+        case "carpenter": return getBody_Worker(level);
+        case "upgrader": return getBody_Worker(level);
     }
 }
 

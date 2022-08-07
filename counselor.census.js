@@ -235,11 +235,9 @@ module.exports = function(){
                         else if (beesRole == 'worker'){
                             var hauledSourceObject = queenObject[beesQueen].hauledSourceObject;
                             if(!hauledSourceObject[localSources[source]]){
-                                console.log("This should happen")
                                 queenObject[beesQueen].hauledSourceObject[localSources[source]] = [bee.id];
                             }
                             else{
-                                console.log(queenObject[beesQueen].hauledSourceObject[localSources[source]])
                                 queenObject[beesQueen].hauledSourceObject[localSources[source]].push(bee.id)
                             }
                         }
