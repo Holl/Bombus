@@ -124,7 +124,10 @@ module.exports = function(){
                     hostilePower += getUnitPower(hostileCreeps[i]);
                 }
             }
-
+            var remoteRooms = {};
+            if(Memory.census.queenObject[name].remoteRooms){
+                remoteRooms = Memory.census.queenObject[name].remoteRooms;
+            }
             // And add it to the object:
 			queenObject[name] = {
                 "energyNow": Game.spawns[spawn].room.energyAvailable,
@@ -142,7 +145,8 @@ module.exports = function(){
                 "level": level,
                 "levelUpBool": levelUpBool,
                 "hostilePower": hostilePower,
-                "storage": storageBool
+                "storage": storageBool,
+                "remoteRooms": remoteRooms
             };
 		}
 	};

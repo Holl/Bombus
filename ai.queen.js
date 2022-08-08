@@ -243,20 +243,35 @@ function scoutSpawning(queenName, beeLevel, phase){
 
     var scoutArray = Memory.census.queenObject[queenName].bees.scout;
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+    var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
+
+    var exits = Game.map.describeExits(queenName);
+    var incompleteBool = 0;
+
+    for (var exit in exits){
+        if (!remoteRooms[exits[exit]].armComplete){
+            incompleteBool = 1;
+        }
+    }
 
     var noScouts = 1;
 
-    if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
-        db.vLog("Spawning a scout.");
-        creepCreator(           inactiveSpawn, 
-                                'scout', 
-                                1,
-                                queenName,
-                                {'mission':'remote'}
-                            );
-        return;
+    
+    if (incompleteBool){
+        if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
+            db.vLog("Spawning a scout.");
+            creepCreator(           inactiveSpawn, 
+                                    'scout', 
+                                    1,
+                                    queenName,
+                                    {'mission':'remote'}
+                                );
+            return;
+        }
     }
-     
+    else {
+        console.log("Scouting is done.")
+    }
 
 }
 

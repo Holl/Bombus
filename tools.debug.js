@@ -1,4 +1,4 @@
-const verbose = 1;
+const verbose = 0;
 
 module.exports = {
 	str(obj){

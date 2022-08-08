@@ -14,7 +14,7 @@ module.exports = {
 	},
 	getMemoryByQueenName(queenName){
 		return Memory['census']['queenObject'][queenName];
-	},
+	}, 
 	doesObjectHaveKeysOfArray(array, obj){
 		return array.every(item => obj.hasOwnProperty(item));
 	},
@@ -128,6 +128,32 @@ module.exports = {
 		var finalPos = pythagorasCheck(avgX,avgY,possiblePos);
 
 		return finalPos;
+	},
+	scoutSnapshot(roomName){
+		var finalObject = {};
+		var room = Game.rooms[roomName];
+		var sources = room.find(FIND_SOURCES);
+		var controller = room.controller;
+		var deposits = room.find(FIND_DEPOSITS);
+		var owner='';
+		if(controller){
+			if (controller.owner){
+				owner = controller.owner.username;
+			}
+			else{
+				owner=false;
+			}
+		}
+		else{
+			owner=null; 
+		}
+	
+		return {
+			"sources": sources,
+			"controller": controller,
+			"owner":owner,
+			"deposits":deposits
+		}
 	}
 }
 

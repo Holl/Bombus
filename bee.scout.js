@@ -13,57 +13,48 @@ module.exports = function(queenName){
         if(ourBee.memory.mission == "remote"){
             if (ourBee.memory.targetRoom){
                 if (ourBee.memory.targetRoom == currentRoomName){
-                    var spawnLoc = common.findCenterSpawnLocation(currentRoomName);
-                    var room = Game.rooms[currentRoomName];
-                    var sources = room.find(FIND_SOURCES);
-                    var controller = room.controller;
-                    var deposits = room.find(FIND_DEPOSITS);
-                    var owner='';
-                    if(controller){
-                        if (controller.owner){
-                            owner = controller.owner.username;
-                        }
-                        else{
-                            owner=false;
-                        }
+                    ourBee.moveTo(25,25,ourBee.memory.targetRoom);
+                    var data = common.scoutSnapshot(currentRoomName);
+                    if(!Memory.census.queenObject[queenName].remoteRooms[currentRoomName]){
+                        Memory.census.queenObject[queenName].remoteRooms[currentRoomName] = data;
                     }
-                    else{
-                        owner=null; 
-                    }
-                    
-                    if (spawnLoc == false){
-                        Memory.empress.scoutReports[currentRoomName] = {
-                            "capturable":false,
-                            "sources": sources,
-                            "controller": controller,
-                            "owner":owner,
-                            "deposits":deposits
-                        }
-                    }
-                    else{
-                        Memory.empress.scoutReports[currentRoomName] = {
-                            "capturable":true,
-                            "spawnLocation": spawnLoc,
-                            "sources": sources,
-                            "controller": controller,
-                            "owner":owner,
-                            "deposits":deposits
-                        }
-                    }
-                    ourBee.memory.targetRoom = '';
+                    ourBee.memory.targetRoom = null;
                 }
                 else {
-                    // db.str(ourBee.pos.findPathTo(RoomPosition(25,25,ourBee.memory.targetRoom)));
-    
                     if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom), {maxRooms: 24, maxOps: 5000}) == ERR_NO_PATH){
-                        Memory.empress.scoutReports[ourBee.memory.targetRoom] = {
-                            "reachable": false
-                        }
+                        console.log("Doesn't work")
                     }
                 }
             }
             else{
-                
+                var exits = Game.map.describeExits(currentRoomName);
+                var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
+                var queenCheck = false;
+                var completedCheck = true;
+                for (exit in exits){
+                    if ((!remoteRooms[exits[exit]] || ourBee.room.name == queenName) && exits[exit] != queenName){
+                        ourBee.memory.targetRoom = exits[exit];
+                        completedCheck = false;
+                        console.log("Why does htis happen?")
+                    }
+                    if (exits[exit] == queenName || ourBee.room.name == queenName){
+                        queenCheck = true;
+                    }
+                }
+                if (queenCheck == false){
+                    ourBee.suicide();
+                }
+                if (completedCheck){
+                    console.log("Does this ever happen");
+                    Memory.census.queenObject[queenName].remoteRooms[currentRoomName].armComplete = true;
+                    console.log("Arm complete.");
+                    ourBee.suicide();
+                }
+                if (ourBee.moveTo(25,25,ourBee.memory.targetRoom, {}) == ERR_NO_PATH){
+                    Memory.empress.scoutReports[ourBee.memory.targetRoom] = {
+                        "reachable": false
+                    }
+                };
             }
         }
 	}
