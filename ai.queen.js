@@ -17,6 +17,7 @@ var harvesterFunction = require('bee.harvester');
 var workerFunction = require('bee.worker');
 var carpenterFunction = require('bee.carpenter');
 var upgraderFunction = require('bee.upgrader');
+var scoutFunction = require('bee.scout');
 
 
 module.exports = function(queenName){
@@ -32,6 +33,7 @@ module.exports = function(queenName){
         var beeLevel = calculateLevel(energyMax, queenName);
         db.vLog("Bee level is " + beeLevel);
 
+        scoutSpawning(queenName, beeLevel, phase);
         maintenanceSpawning(queenName, beeLevel, phase);
         normalEconomySpawning(queenName, beeLevel, phase);
 
@@ -45,6 +47,7 @@ module.exports = function(queenName){
     workerFunction(queenName, Memory.census.queenObject[queenName]);
     carpenterFunction(queenName, Memory.census.queenObject[queenName]);
     upgraderFunction(queenName, Memory.census.queenObject[queenName]);
+    scoutFunction(queenName, Memory.census.queenObject[queenName])
 
     runarchitect(queenName);
     
@@ -234,6 +237,27 @@ function maintenanceSpawning(queenName, beeLevel, phase){
         }
     }
     return;
+}
+
+function scoutSpawning(queenName, beeLevel, phase){
+
+    var scoutArray = Memory.census.queenObject[queenName].bees.scout;
+    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+
+    var noScouts = 1;
+
+    if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
+        db.vLog("Spawning a scout.");
+        creepCreator(           inactiveSpawn, 
+                                'scout', 
+                                1,
+                                queenName,
+                                {'mission':'remote'}
+                            );
+        return;
+    }
+     
+
 }
 
 // A simple check, based on our max energy storage, on how advanced we want our creeps to be.

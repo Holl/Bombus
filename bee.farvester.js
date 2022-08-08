@@ -7,10 +7,9 @@ module.exports = function(queenName){
     // A bee dedicated to simply moving to a source,
     // and mining it until death.
 
-
-    var harvesterArray = Memory.census.queenObject[queenName].bees.harvester;
-    for (var bee in harvesterArray){
-        var beeName = harvesterArray[bee];
+    var farvesterArray = Memory.census.queenObject[queenName].bees.farvester;
+    for (var bee in farvesterArray){
+        var beeName = farvesterArray[bee];
         var beeObj = Game.creeps[beeName];
         var source = Game.getObjectById(beeObj.memory.source);
         beeFunc.mineSource(beeObj, source);

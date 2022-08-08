@@ -5,6 +5,7 @@ var beeFunc = require('tools.beeFunctions')
 module.exports = function(queenName, queenObj){
 
     var carpenterArray = Memory.census.queenObject[queenName].bees.carpenter; 
+    var repairArray = Memory.census.queenObject[queenName].repairStructures;
     for (var bee in carpenterArray){
         var beeName = carpenterArray[bee];
         var ourBee = Game.creeps[beeName];

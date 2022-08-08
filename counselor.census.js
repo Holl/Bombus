@@ -4,10 +4,10 @@ module.exports = function(){
 
     // Hear ye, hear ye!
     // The census object is what we're building over this function.
-    // It's an object that basically will have all the information we'll need:
+    // It's an object that basically will have all the information we'll need for the 
+    // AIs to make decisions:
     //      1) queenObject, an object of objects of all our queens
     //      2) empireObject, anything we might look at outside this scope.
-
 
     // We'll start with declaring these variables:
 
@@ -16,7 +16,6 @@ module.exports = function(){
     var queenObject = {};
     var empireObject = {};
 
-	var beeArray = [];
 	var freeBeeArray = [];
     var deadQueenBees = [];
 
@@ -73,6 +72,11 @@ module.exports = function(){
                 }
             }
             var constructionSites = Game.spawns[spawn].room.find(FIND_CONSTRUCTION_SITES);
+            
+            var repairArray = Game.spawns[spawn].room.find(FIND_STRUCTURES, {
+                filter: object => object.hits < object.hitsMax
+            });
+
             var spawnNameArrray = [];
             var inactiveSpawnNameArray = [];
             for (var spawnObj in spawnObjArray){
@@ -133,6 +137,7 @@ module.exports = function(){
                 "energyStructuers": energyStructuers,
                 "thirstyStructures": thirstyStructuers,
                 "constructionSites": constructionSites,
+                "repairStructures" : repairArray,
                 "bees":{},
                 "level": level,
                 "levelUpBool": levelUpBool,
@@ -266,31 +271,6 @@ module.exports = function(){
     censusObject = {empireObject, queenObject};
 
     Memory['census'] = censusObject;
-}
-
-function runTerritoryScan(creep){
-    // A smaller scan to understand exactly what is in a territory,
-    // and and if there are any threats.
-    var sources = creep.room.find(FIND_SOURCES);
-    var contructionSites = creep.room.find(FIND_CONSTRUCTION_SITES);
-    var hostileCreeps = creep.room.find(FIND_HOSTILE_CREEPS);
-    var roomName =  creep.room.name;
-    
-    return {
-        "roomName": roomName,
-        "sources": sources,
-        "contructionSites": contructionSites,
-        "hostileCreeps": hostileCreeps
-    }
-}
-
-function groupBy(array, property) {
-    var hash = {};
-    for (var i = 0; i < array.length; i++) {
-        if (!hash[array[i][property]]) hash[array[i][property]] = [];
-        hash[array[i][property]].push(array[i]);
-    }
-    return hash;
 }
 
 function getUnitPower(creep){

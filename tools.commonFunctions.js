@@ -23,6 +23,7 @@ module.exports = {
 	        bee.moveTo(bee.room.controller);
 	    }
 		else{
+			// bee.moveTo(bee.room.controller);
 			bee.signController(bee.room.controller, "Reworking code from scratch.  Really quite harmless.");
 		}
 	},
