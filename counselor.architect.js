@@ -21,7 +21,6 @@ function levelUpConstruction(queenName){
 				createDiamond(thisRoom, spawnPos.x, spawnPos.y-1);
 				break;
 			case 3:
-				console.log("uhh")
 				thisRoom.getPositionAt(spawnPos.x-2, spawnPos.y-2).createConstructionSite(STRUCTURE_TOWER);
 				createDiamond(thisRoom, spawnPos.x, spawnPos.y+5);
 				roadsToRoam(thisRoom, spawnPos);

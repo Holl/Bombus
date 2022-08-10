@@ -127,6 +127,10 @@ module.exports = function(){
             var remoteRooms = {};
             if(Memory.census.queenObject[name].remoteRooms){
                 remoteRooms = Memory.census.queenObject[name].remoteRooms;
+                for (var room in remoteRooms){
+                    remoteRooms[room].hauledSourceObject = {};
+                    remoteRooms[room].harvestedSources = [];
+                }
             }
             // And add it to the object:
 			queenObject[name] = {
@@ -168,6 +172,7 @@ module.exports = function(){
     }
 
     var harvestedSourcesArray = [];
+
 
 	for (var creep in Game.creeps){
         var bee = Game.creeps[creep];
@@ -236,6 +241,7 @@ module.exports = function(){
             }
             if (bee.memory.source){
                 var localSources = queenObject[beesQueen].localSources;
+                var remoteRooms = queenObject[beesQueen].remoteRooms;
                 for (var source in localSources){
                     if (bee.memory.source == localSources[source]){
                         if (beesRole == 'harvester'){
@@ -248,6 +254,39 @@ module.exports = function(){
                             }
                             else{
                                 queenObject[beesQueen].hauledSourceObject[localSources[source]].push(bee.id)
+                            }
+                        }
+                    }
+                }
+                if (beesRole == "remoteHarvester" || beesRole == "remoteWorker"){
+                    for (var room in remoteRooms){
+                        var remoteSources = remoteRooms[room].sources;
+                        
+                        for (var source in remoteSources){
+                            if (remoteSources[source].id == bee.memory.source.id){
+                                if (beesRole == "remoteHarvester"){
+                                    if (queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].harvestedSources){
+                                        queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].harvestedSources.push(bee.memory.source.id);
+                                    }
+                                    else{
+                                        queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].harvestedSources = [bee.memory.source.id];
+                                    }
+                                }
+                                else if (beesRole == "remoteWorker"){
+                                    var hauledSourceObject = queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject;
+                                    if(hauledSourceObject == undefined){
+                                        console.log("3")
+                                        queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject = {};
+                                        queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject[remoteSources[source].id] = [bee.id];
+                                    }
+                                    else if (!hauledSourceObject[remoteSources[source].id]){
+                                        queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject[remoteSources[source].id] = [bee.id];
+                                    }
+                                    else{
+                                        queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject[remoteSources[source].id].push(bee.id)
+                                    }
+                                }
+
                             }
                         }
                     }

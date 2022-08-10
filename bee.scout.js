@@ -35,7 +35,6 @@ module.exports = function(queenName){
                     if ((!remoteRooms[exits[exit]] || ourBee.room.name == queenName) && exits[exit] != queenName){
                         ourBee.memory.targetRoom = exits[exit];
                         completedCheck = false;
-                        console.log("Why does htis happen?")
                     }
                     if (exits[exit] == queenName || ourBee.room.name == queenName){
                         queenCheck = true;
@@ -45,9 +44,7 @@ module.exports = function(queenName){
                     ourBee.suicide();
                 }
                 if (completedCheck){
-                    console.log("Does this ever happen");
                     Memory.census.queenObject[queenName].remoteRooms[currentRoomName].armComplete = true;
-                    console.log("Arm complete.");
                     ourBee.suicide();
                 }
                 if (ourBee.moveTo(25,25,ourBee.memory.targetRoom, {}) == ERR_NO_PATH){

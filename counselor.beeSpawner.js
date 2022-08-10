@@ -5,7 +5,6 @@ module.exports = function(spawnName, roleName, creepLevel, queenName, metaData){
         ...{'role': roleName, 'queen': queenName},
         ...metaData
     }
-    console.log(Game.spawns[spawnName].spawnCreep(body, name, {memory: finalMetaData}))
     Game.spawns[spawnName].spawnCreep(body, name, {memory: finalMetaData});
 }
 
@@ -15,8 +14,10 @@ function getBody(role, level){
         case "harvester": return getBody_Harvester(level);
         case "worker": return getBody_Worker(level);
         case "carpenter": return getBody_Worker(level);
-        case "upgrader": return getBody_Worker(level);;
-        case "scout": return getBody_Scout(level)
+        case "upgrader": return getBody_Worker(level);
+        case "scout": return getBody_Scout(level);
+        case "remoteHarvester": return getBody_Harvester(level);
+        case "remoteWorker": return getBody_Worker(level);
     }
 }
 
@@ -35,8 +36,7 @@ function getBody_Harvester(level){
                         WORK, WORK];
         case 2: return [MOVE, 
                         WORK, WORK, WORK, WORK];
-        case 3: return [MOVE, 
-                        WORK, WORK, WORK, WORK, WORK];
+        case 3: return [MOVE, WORK, WORK, WORK, WORK, WORK];
         case 4: return [MOVE, MOVE, MOVE, MOVE, MOVE, 
                         WORK, WORK, WORK, WORK, WORK];
     }

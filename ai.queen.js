@@ -18,6 +18,8 @@ var workerFunction = require('bee.worker');
 var carpenterFunction = require('bee.carpenter');
 var upgraderFunction = require('bee.upgrader');
 var scoutFunction = require('bee.scout');
+var remoteHarvesterFunction = require('bee.remoteHarvester');
+var remoteWorkerFunction = require('bee.remoteWorker');
 
 
 module.exports = function(queenName){
@@ -33,6 +35,7 @@ module.exports = function(queenName){
         var beeLevel = calculateLevel(energyMax, queenName);
         db.vLog("Bee level is " + beeLevel);
 
+        remoteEconomySpawning(queenName, beeLevel, phase);
         scoutSpawning(queenName, beeLevel, phase);
         maintenanceSpawning(queenName, beeLevel, phase);
         normalEconomySpawning(queenName, beeLevel, phase);
@@ -47,7 +50,9 @@ module.exports = function(queenName){
     workerFunction(queenName, Memory.census.queenObject[queenName]);
     carpenterFunction(queenName, Memory.census.queenObject[queenName]);
     upgraderFunction(queenName, Memory.census.queenObject[queenName]);
-    scoutFunction(queenName, Memory.census.queenObject[queenName])
+    scoutFunction(queenName, Memory.census.queenObject[queenName]);
+    remoteHarvesterFunction(queenName, Memory.census.queenObject[queenName]);
+    remoteWorkerFunction(queenName, Memory.census.queenObject[queenName]);
 
     runarchitect(queenName);
     
@@ -151,7 +156,6 @@ function normalEconomySpawning(queenName, beeLevel, phase){
         }
         // If not, haulers do basically everything.
         else if (!hauledSourceObject[localSources[source]] || hauledSourceObject[localSources[source]].length < noHaulers){
-            
             // Otherwise, if hauledSourceObject doesn't have a value withe the key
             // of source, we know that source doesn't have haulers.
             // If it does, but he count is below our const, we still need more.
@@ -269,11 +273,51 @@ function scoutSpawning(queenName, beeLevel, phase){
             return;
         }
     }
-    else {
-        console.log("Scouting is done.")
-    }
-
 }
+
+function remoteEconomySpawning(queenName, beeLevel, phase){
+    var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
+    console.log(remoteRooms);
+    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0]
+    for (var room in remoteRooms){
+        console.log(room);
+        var sources = remoteRooms[room].sources;
+        var harvestedSourceArray = [];
+        harvestedSourceArray = remoteRooms[room].harvestedSources;
+        var hauledSourceObject = remoteRooms[room].hauledSourceObject;
+        if (!hauledSourceObject){
+            hauledSourceObject = {};
+        }
+        for (var source in sources){
+
+            if (!harvestedSourceArray || !harvestedSourceArray.includes(sources[source].id)){
+                db.vLog("Spawning a remote harvester for " + sources[source].id);
+                console.log(sources[source].id);
+                creepCreator(inactiveSpawn, 
+                    'remoteHarvester', 
+                    beeLevel,
+                    queenName,
+                    {'source':sources[source],
+                    'remoteRoom': room
+                    }
+                );
+                return;
+            }
+            else if (!hauledSourceObject[sources[source].id] || hauledSourceObject[sources[source].id].length < noHaulers){
+                db.vLog("Spawning a remote worker for " + sources[source].id);
+                creepCreator(inactiveSpawn, 
+                    'remoteWorker', 
+                    beeLevel,
+                    queenName,
+                    {'source':sources[source],
+                    'remoteRoom': room
+                    }
+                );
+                return;
+            }
+        }
+    }
+} 
 
 // A simple check, based on our max energy storage, on how advanced we want our creeps to be.
 function calculateLevel(energyMax, queenName){
