@@ -1,4 +1,5 @@
 var db = require('tools.debug');
+var common = require('tools.commonFunctions')
 
 module.exports = function(){
 
@@ -72,10 +73,13 @@ module.exports = function(){
                 }
             }
             var constructionSites = Game.spawns[spawn].room.find(FIND_CONSTRUCTION_SITES);
+            var connstructionSitesIdArray = common.reutrnIDsFromArray(constructionSites);
             
             var repairArray = Game.spawns[spawn].room.find(FIND_STRUCTURES, {
                 filter: object => object.hits < object.hitsMax
             });
+
+            var reapirIDArray = common.reutrnIDsFromArray(repairArray);
 
             var spawnNameArrray = [];
             var inactiveSpawnNameArray = [];
@@ -98,23 +102,18 @@ module.exports = function(){
             if (storageArray.length > 0){
                 storageBool = storageArray[0].id;
             }
-
+            var oldLevel = 1;
+            if (Memory.census){
+                if(Memory.census.queenObject[name].level){
+                    oldLevel = Memory.census.queenObject[name].level;
+                }
+            }
             var level = Game.spawns[spawn].room.controller.level;
             var levelUpBool = 0;
-            if (level == 1){
-                Memory[spawn] = {}; 
-                Memory[spawn]['level'] = 1;
-            }
-            else{
-                if (!Memory[spawn]){
-                    Memory[spawn] = {};
-                    Memory[spawn]['level'] = level;
-                }
-                if (Memory[spawn]['level'] != level){
-                    db.vLog("Level up!");
-                    Memory[spawn]['level'] = level;
-                    levelUpBool = 1;
-                }
+            if (oldLevel != level){
+                db.vLog("Level up!");
+                Memory[spawn]['level'] = level;
+                levelUpBool = 1;
             }
 
             var hostileCreeps = Game.spawns[spawn].room.find(FIND_HOSTILE_CREEPS);
@@ -125,13 +124,16 @@ module.exports = function(){
                 }
             }
             var remoteRooms = {};
-            if(Memory.census.queenObject[name].remoteRooms){
-                remoteRooms = Memory.census.queenObject[name].remoteRooms;
-                for (var room in remoteRooms){
-                    remoteRooms[room].hauledSourceObject = {};
-                    remoteRooms[room].harvestedSources = [];
+            if (Memory.census){
+                if(Memory.census.queenObject[name].remoteRooms){
+                    remoteRooms = Memory.census.queenObject[name].remoteRooms;
+                    for (var room in remoteRooms){
+                        remoteRooms[room].hauledSourceObject = {};
+                        remoteRooms[room].harvestedSources = [];
+                    }
                 }
             }
+    
             // And add it to the object:
 			queenObject[name] = {
                 "energyNow": Game.spawns[spawn].room.energyAvailable,
@@ -141,10 +143,9 @@ module.exports = function(){
                 "hauledSourceObject" : {},
                 "spawns": spawnNameArrray,
                 "inactiveSpawns": inactiveSpawnNameArray,
-                "energyStructuers": energyStructuers,
                 "thirstyStructures": thirstyStructuers,
-                "constructionSites": constructionSites,
-                "repairStructures" : repairArray,
+                "constructionSites": connstructionSitesIdArray,
+                "repairStructures" : reapirIDArray,
                 "bees":{},
                 "level": level,
                 "levelUpBool": levelUpBool,

@@ -12,6 +12,6 @@ module.exports = function(queenName, queenObj){
     var starterArray = Memory.census.queenObject[queenName].bees.starter;
     for(var bee in starterArray){
         var beeName = starterArray[bee];
-        beeFunc.starterMining(beeName, queenObj);
+        beeFunc.starterMining(beeName);
     }
 }

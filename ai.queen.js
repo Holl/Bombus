@@ -34,11 +34,12 @@ module.exports = function(queenName){
 
         var beeLevel = calculateLevel(energyMax, queenName);
         db.vLog("Bee level is " + beeLevel);
-
+        var oldCPU = Game.cpu.getUsed();
         remoteEconomySpawning(queenName, beeLevel, phase);
         scoutSpawning(queenName, beeLevel, phase);
         maintenanceSpawning(queenName, beeLevel, phase);
         normalEconomySpawning(queenName, beeLevel, phase);
+      
 
     }
     else{
@@ -53,8 +54,12 @@ module.exports = function(queenName){
     scoutFunction(queenName, Memory.census.queenObject[queenName]);
     remoteHarvesterFunction(queenName, Memory.census.queenObject[queenName]);
     remoteWorkerFunction(queenName, Memory.census.queenObject[queenName]);
-
+  
     runarchitect(queenName);
+
+    if (Memory.census.queenObject[queenName].hostilePower > 1){
+        defenseFunction(queenName);
+    }
     
 }
 
@@ -253,7 +258,8 @@ function scoutSpawning(queenName, beeLevel, phase){
     var incompleteBool = 0;
 
     for (var exit in exits){
-        if (!remoteRooms[exits[exit]].armComplete){
+        
+        if (remoteRooms[exits[exit]] && !remoteRooms[exits[exit]].armComplete){
             incompleteBool = 1;
         }
     }
@@ -277,10 +283,8 @@ function scoutSpawning(queenName, beeLevel, phase){
 
 function remoteEconomySpawning(queenName, beeLevel, phase){
     var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
-    console.log(remoteRooms);
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0]
     for (var room in remoteRooms){
-        console.log(room);
         var sources = remoteRooms[room].sources;
         var harvestedSourceArray = [];
         harvestedSourceArray = remoteRooms[room].harvestedSources;
@@ -292,7 +296,6 @@ function remoteEconomySpawning(queenName, beeLevel, phase){
 
             if (!harvestedSourceArray || !harvestedSourceArray.includes(sources[source].id)){
                 db.vLog("Spawning a remote harvester for " + sources[source].id);
-                console.log(sources[source].id);
                 creepCreator(inactiveSpawn, 
                     'remoteHarvester', 
                     beeLevel,
@@ -355,5 +358,22 @@ function determineQueenPhase(queenName){
     else{
         return "summer";
     }
+}
 
+function defenseFunction(queenName){
+    if (true){
+        var hostiles = Game.rooms[queenName].find(FIND_HOSTILE_CREEPS);
+        if(hostiles.length > 0) {
+            var username = hostiles[0].owner.username; 
+            console.log(username != 'staxwell' && username != 'Huggable_Shark');
+            if (username != 'staxwell'){ 
+                // Game.notify(`User ${username} spotted in room ${queenName}`);
+            } 
+            if (username != 'staxwell' && username != 'Huggable_Shark'){
+                var towers = Game.rooms[queenName].find(
+                    FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+                towers.forEach(tower => tower.attack(hostiles[0]));
+            }
+        }
+    }
 }

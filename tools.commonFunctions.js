@@ -12,6 +12,13 @@ module.exports = {
 			}
 		}
 	},
+	reutrnIDsFromArray(array){
+		var idArray = [];
+		for (var thing in array){
+			idArray.push(array[thing].id)
+		}
+		return idArray;
+	},
 	getMemoryByQueenName(queenName){
 		return Memory['census']['queenObject'][queenName];
 	}, 
@@ -133,6 +140,10 @@ module.exports = {
 		var finalObject = {};
 		var room = Game.rooms[roomName];
 		var sources = room.find(FIND_SOURCES);
+		var sourceArray = [];
+		for (var source in sources){
+			sourceArray.push(sources[source].id)
+		}
 		var controller = room.controller;
 		var deposits = room.find(FIND_DEPOSITS);
 		var owner='';

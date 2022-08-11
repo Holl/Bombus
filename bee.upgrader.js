@@ -2,7 +2,7 @@ var common = require('tools.commonFunctions');
 var db = require('tools.debug');
 var beeFunc = require('tools.beeFunctions')
 
-module.exports = function(queenName, queenObj){
+module.exports = function(queenName){
 
 
     var upgraderArray = Memory.census.queenObject[queenName].bees.upgrader;

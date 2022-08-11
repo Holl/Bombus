@@ -2,30 +2,33 @@ var db = require('tools.debug');
 var common = require('tools.commonFunctions');
 
 module.exports = {
-	starterMining(beeName, queenObj){
-        var source = Game.getObjectById(queenObj['localSources'][0]);
+	starterMining(beeName){
         var bee = Game.creeps[beeName];
-        if(bee.carry.energy < bee.carryCapacity) {
-            if(bee.harvest(source) == ERR_NOT_IN_RANGE) {
-                bee.moveTo(source);
-            }
-            else(bee.harvest(source));
-        }
-        else{
-            var targets = bee.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return ((structure.structureType == STRUCTURE_SPAWN ||
-                        structure.structureType == STRUCTURE_EXTENSION)&&
-                    (structure.energy < structure.energyCapacity || 
-                        structure.store < structure.storeCapacity))
+        if (Memory.census){
+            var source = Game.getObjectById(Memory.census.queenObject[bee.memory.queen].localSources[0]);
+            if(bee.carry.energy < bee.carryCapacity) {
+                if(bee.harvest(source) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(source);
                 }
-            });
-            if(targets.length > 0) {
-                if(bee.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(targets[0]);
+                else(bee.harvest(source));
+            }
+            else{
+                var targets = bee.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return ((structure.structureType == STRUCTURE_SPAWN ||
+                            structure.structureType == STRUCTURE_EXTENSION)&&
+                        (structure.energy < structure.energyCapacity || 
+                            structure.store < structure.storeCapacity))
+                    }
+                });
+                if(targets.length > 0) {
+                    if(bee.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        bee.moveTo(targets[0]);
+                    }
                 }
             }
         }
+
 	},
 	upgradeController(bee){
 	    if(bee.upgradeController(bee.room.controller) == ERR_NOT_IN_RANGE) {
@@ -36,11 +39,11 @@ module.exports = {
         if(bee.harvest(source) == ERR_NOT_IN_RANGE || bee.harvest(source) == ERR_BUSY) {
             if (bee.memory.pickupID){
                 var container = Game.getObjectById(bee.memory.pickupID);
-                bee.moveTo(container);
+                bee.moveTo(container, {ignoreCreeps: true});
             }
             else{
                 bee.memory.pickupID = common.findContainerIDFromSource(source.id);
-                bee.moveTo(source);
+                bee.moveTo(source, {ignoreCreeps: true});
             }
             
         }
