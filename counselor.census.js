@@ -112,7 +112,6 @@ module.exports = function(){
             var levelUpBool = 0;
             if (oldLevel != level){
                 db.vLog("Level up!");
-                Memory[spawn]['level'] = level;
                 levelUpBool = 1;
             }
 
@@ -276,7 +275,6 @@ module.exports = function(){
                                 else if (beesRole == "remoteWorker"){
                                     var hauledSourceObject = queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject;
                                     if(hauledSourceObject == undefined){
-                                        console.log("3")
                                         queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject = {};
                                         queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].hauledSourceObject[remoteSources[source].id] = [bee.id];
                                     }
@@ -291,6 +289,9 @@ module.exports = function(){
                             }
                         }
                     }
+                }
+                if (beesRole == "reserver"){
+                    queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].reserverBee = true;
                 }
             }
             

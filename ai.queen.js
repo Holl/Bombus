@@ -20,11 +20,11 @@ var upgraderFunction = require('bee.upgrader');
 var scoutFunction = require('bee.scout');
 var remoteHarvesterFunction = require('bee.remoteHarvester');
 var remoteWorkerFunction = require('bee.remoteWorker');
+var reserverFunction = require('bee.reserver');
 
 
 module.exports = function(queenName){
-
-    db.vLog("~~~~~~~~" + queenName + "~~~~~~~~");
+    db.vLog("~~~~~~~~| Queen:" + queenName + " |~~~~~~~~");
 
     var phase = determineQueenPhase(queenName);
     var inactiveSpawns = Memory.census.queenObject[queenName].inactiveSpawns;
@@ -34,13 +34,22 @@ module.exports = function(queenName){
 
         var beeLevel = calculateLevel(energyMax, queenName);
         db.vLog("Bee level is " + beeLevel);
-        var oldCPU = Game.cpu.getUsed();
-        remoteEconomySpawning(queenName, beeLevel, phase);
-        scoutSpawning(queenName, beeLevel, phase);
-        maintenanceSpawning(queenName, beeLevel, phase);
-        normalEconomySpawning(queenName, beeLevel, phase);
-      
 
+        var spawnCheck = false;
+
+        spawnCheck = normalEconomySpawning(queenName, beeLevel, phase);
+        if (!spawnCheck){
+            spawnCheck = maintenanceSpawning(queenName, beeLevel, phase);
+        }
+        if (!spawnCheck && beeLevel > 2){
+            spawnCheck = scoutSpawning(queenName, beeLevel, phase);
+        }
+        if (!spawnCheck && beeLevel > 2){
+            spawnCheck  = remoteEconomySpawning(queenName, beeLevel, phase);
+        }
+        if (!spawnCheck){
+            db.vLog("All needed bees have been spawned.")
+        }
     }
     else{
         db.vLog("There are no inactive spawns.")
@@ -54,6 +63,7 @@ module.exports = function(queenName){
     scoutFunction(queenName, Memory.census.queenObject[queenName]);
     remoteHarvesterFunction(queenName, Memory.census.queenObject[queenName]);
     remoteWorkerFunction(queenName, Memory.census.queenObject[queenName]);
+    reserverFunction(queenName);
   
     runarchitect(queenName);
 
@@ -76,16 +86,15 @@ function normalEconomySpawning(queenName, beeLevel, phase){
         if (beeLevel == 1 || energyNow < 500){
             // This will run if our creep level is 1, meaning that we're probably starting off
             // or things are really bad.
-            db.vLog("Spawning starter.");
             creepCreator(inactiveSpawns[0], "starter", 1, queenName);
-            return;
+            return true;
         }
         else{
             // If our Bee Level isn't 1, then our structures are OK- just we have no creeps,
             // and we should probably try to spin something larger up.
 
             // TODO: Write some more normal functionality for this edgecase.
-            return;
+            return true;
         }
     }
 
@@ -118,7 +127,6 @@ function normalEconomySpawning(queenName, beeLevel, phase){
         if (unharvestedSourceArray.includes(localSources[source])){
             // Create a harvester bee and set it loose on the source.
             // Return cuz we're done.
-            db.vLog("Spawning Harvester.");
             var container = common.findContainerIDFromSource(localSources[source]);
             
             if (container){
@@ -131,7 +139,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
                                 'container': 1
                                 }
                             );
-                return;
+                return true;
             }
             else{
                  creepCreator(inactiveSpawn, 
@@ -140,7 +148,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
                                 queenName,
                                 {'source':localSources[source]}
                             );
-                return;
+                return true;
             }
         }
         // If we HAVE a real storage, we can be more specialized, and therefore, CPU efficent.
@@ -148,7 +156,6 @@ function normalEconomySpawning(queenName, beeLevel, phase){
         else if (storage){
             if(!shippedSourceObject[localSources[source]] || 
                 shippedSourceObject[localSources[source]].length < noShipper){
-                db.vLog("Spawning Shipper.");
                 creepCreator(inactiveSpawn, 
                                     'shipper', 
                                     beeLevel,
@@ -156,7 +163,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
                                     {'source':localSources[source],
                                     'storage': storage}
                                 );
-                return;
+                return true;
             }
         }
         // If not, haulers do basically everything.
@@ -164,14 +171,13 @@ function normalEconomySpawning(queenName, beeLevel, phase){
             // Otherwise, if hauledSourceObject doesn't have a value withe the key
             // of source, we know that source doesn't have haulers.
             // If it does, but he count is below our const, we still need more.
-            db.vLog("Spawning Worker.");
             creepCreator(inactiveSpawn, 
                 'worker',
                 beeLevel, 
                 queenName,
                 {'source':localSources[source]}
             );
-            return;
+            return true;
         }
     }
     noUpgraders = 1;
@@ -188,41 +194,38 @@ function normalEconomySpawning(queenName, beeLevel, phase){
         }
     }
     if (upgraderArray == undefined){
-        db.vLog("Spawning Upgrader.");
         creepCreator(inactiveSpawn, 
                             'upgrader', 
                             1,
                             queenName
                         );
-        return;
+        return true;
     }
     if (droneArray == undefined && queenObject["energyNow"] < 301 && phase == "summer"){
-        db.vLog("Spawning Lvl 1 Drone.");
         creepCreator(inactiveSpawn, 
                             'drone', 
                             1,
                             queenName
                         );
-        return;
+        return true;
     }
     else if ((droneArray == undefined || droneArray.length < noDrones) && phase == "summer"){
-        db.vLog("Spawning big Drone.");
         creepCreator(inactiveSpawn, 
                             'drone', 
                             beeLevel,
                             queenName
                         );
-        return;   
+        return true;   
     }
     else if (upgraderArray.length < noUpgraders){
-        db.vLog("Spawning Upgrader.  We should spin up " + noUpgraders);
         creepCreator(inactiveSpawn, 
                             'upgrader', 
                             beeLevel,
                             queenName
                         );
-        return;
+        return true;
     }
+    return false;
 };
 
 function maintenanceSpawning(queenName, beeLevel, phase){
@@ -236,20 +239,18 @@ function maintenanceSpawning(queenName, beeLevel, phase){
     }
     if (level > 1){
         if (carpenterArray && carpenterArray.length < noCarpenters || (!carpenterArray && noCarpenters > 0)){
-            db.vLog("Spawning a carpenter.");
             creepCreator(           inactiveSpawn, 
                                     'carpenter', 
                                     beeLevel,
                                     queenName
                                 );
-            return;
+            return true;
         }
     }
-    return;
+    return false;
 }
 
 function scoutSpawning(queenName, beeLevel, phase){
-
     var scoutArray = Memory.census.queenObject[queenName].bees.scout;
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
     var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
@@ -258,8 +259,7 @@ function scoutSpawning(queenName, beeLevel, phase){
     var incompleteBool = 0;
 
     for (var exit in exits){
-        
-        if (remoteRooms[exits[exit]] && !remoteRooms[exits[exit]].armComplete){
+        if (!remoteRooms[exits[exit]] || !remoteRooms[exits[exit]].armComplete){
             incompleteBool = 1;
         }
     }
@@ -269,57 +269,68 @@ function scoutSpawning(queenName, beeLevel, phase){
     
     if (incompleteBool){
         if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
-            db.vLog("Spawning a scout.");
             creepCreator(           inactiveSpawn, 
                                     'scout', 
                                     1,
                                     queenName,
                                     {'mission':'remote'}
                                 );
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 function remoteEconomySpawning(queenName, beeLevel, phase){
     var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
-    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0]
+    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
     for (var room in remoteRooms){
-        var sources = remoteRooms[room].sources;
-        var harvestedSourceArray = [];
-        harvestedSourceArray = remoteRooms[room].harvestedSources;
-        var hauledSourceObject = remoteRooms[room].hauledSourceObject;
-        if (!hauledSourceObject){
-            hauledSourceObject = {};
-        }
-        for (var source in sources){
-
-            if (!harvestedSourceArray || !harvestedSourceArray.includes(sources[source].id)){
-                db.vLog("Spawning a remote harvester for " + sources[source].id);
-                creepCreator(inactiveSpawn, 
-                    'remoteHarvester', 
-                    beeLevel,
-                    queenName,
-                    {'source':sources[source],
-                    'remoteRoom': room
+        if (remoteRooms[room].owner == false && remoteRooms[room].sources.length > 0 && !remoteRooms[room].owner == null){
+            if (remoteRooms.reserverBee){
+                var sources = remoteRooms[room].sources;
+                var harvestedSourceArray = [];
+                harvestedSourceArray = remoteRooms[room].harvestedSources;
+                var hauledSourceObject = remoteRooms[room].hauledSourceObject;
+                if (!hauledSourceObject){
+                    hauledSourceObject = {};
+                }
+                for (var source in sources){
+                    if (!harvestedSourceArray || !harvestedSourceArray.includes(sources[source].id)){
+                        creepCreator(inactiveSpawn, 
+                            'remoteHarvester', 
+                            beeLevel,
+                            queenName,
+                            {'source':sources[source],
+                            'remoteRoom': room
+                            }
+                        );
+                        return true;
                     }
-                );
-                return;
+                    else if (!hauledSourceObject[sources[source].id] || hauledSourceObject[sources[source].id].length < noHaulers){
+                        creepCreator(inactiveSpawn, 
+                            'remoteWorker', 
+                            beeLevel,
+                            queenName,
+                            {'source':sources[source],
+                            'remoteRoom': room
+                            }
+                        );
+                        return true;
+                    }
+                }
             }
-            else if (!hauledSourceObject[sources[source].id] || hauledSourceObject[sources[source].id].length < noHaulers){
-                db.vLog("Spawning a remote worker for " + sources[source].id);
+            else {
                 creepCreator(inactiveSpawn, 
-                    'remoteWorker', 
+                    'reserver', 
                     beeLevel,
                     queenName,
-                    {'source':sources[source],
-                    'remoteRoom': room
-                    }
+                    {'remoteRoom': room}
                 );
-                return;
+                return true;
             }
         }
     }
+    return false;
 } 
 
 // A simple check, based on our max energy storage, on how advanced we want our creeps to be.

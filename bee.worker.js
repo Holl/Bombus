@@ -70,7 +70,7 @@ module.exports = function(queenName){
                 // and reduce or remove it from the list.
                 bee.memory.deliveryTargetID = Memory.census.queenObject[queenName].thirstyStructures[0].id;
 
-                if (thirstyStructures[0].thirst < bee.carry.energy){
+                if (Memory.census.queenObject[queenName].thirstyStructures[0].thirst < bee.carry.energy){
                     Memory.census.queenObject[queenName].thirstyStructures.splice(0,1);
                 }
                 else{
@@ -78,14 +78,12 @@ module.exports = function(queenName){
                 }
             }
             else if (Memory.census.queenObject[queenName].constructionSites.length > 0){
-                console.log("this?")
                 var site = Game.getObjectById(Memory.census.queenObject[queenName].constructionSites[0]);
                 if(bee.build(site) == ERR_NOT_IN_RANGE){
                     bee.moveTo(site);
                 }
             }
             else{
-                console.log("this")
                 common.upgradeController(bee);
             } 
         }

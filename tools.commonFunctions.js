@@ -35,18 +35,24 @@ module.exports = {
 		}
 	},
 	findContainerIDFromSource(sourceID){
-	    var sourcePos = Game.getObjectById(sourceID).pos
-	    var container = sourcePos.findInRange(FIND_STRUCTURES,1,
-	        {filter: {structureType: STRUCTURE_CONTAINER}});
-	    if (Object.keys(container).length == 0){
-	        container = sourcePos.findInRange(FIND_CONSTRUCTION_SITES,1);
-	    }
-	    if (Object.keys(container).length == 0){
-	        return false;
-	    }
-	    else{
-	        return container[0].id;
-	    }
+	    var source = Game.getObjectById(sourceID)
+		if (source){
+			var sourcePos = source.pos;
+			var container = sourcePos.findInRange(FIND_STRUCTURES,1,
+				{filter: {structureType: STRUCTURE_CONTAINER}});
+			if (Object.keys(container).length == 0){
+				container = sourcePos.findInRange(FIND_CONSTRUCTION_SITES,1);
+			}
+			if (Object.keys(container).length == 0){
+				return false;
+			}
+			else{
+				return container[0].id;
+			}
+		}
+		else{
+			return false;
+		}
 	},
 	findCenterSpawnLocation(roomName){
 
@@ -137,7 +143,6 @@ module.exports = {
 		return finalPos;
 	},
 	scoutSnapshot(roomName){
-		var finalObject = {};
 		var room = Game.rooms[roomName];
 		var sources = room.find(FIND_SOURCES);
 		var sourceArray = [];
@@ -150,6 +155,9 @@ module.exports = {
 		if(controller){
 			if (controller.owner){
 				owner = controller.owner.username;
+			}
+			else if (controller.reservation){
+				owner = controller.reservation;
 			}
 			else{
 				owner=false;

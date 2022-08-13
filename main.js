@@ -1,23 +1,26 @@
 // 
-//   Bombus
+//   Bombus AI
 //     _  _
 //    | )/ )
 // \\ |//,' __
 // (")(_)-"()))=-
 //    (\\
-// alsidfhjalkj
+// 
 
-// Some debug tools:
+// Bombus AI is a screeps AI, designed as an imagined cluster of bee hives.
+
 var db = require('tools.debug');
 
 var runCensus = require('counselor.census');
 var runQueen = require('ai.queen')
 
 module.exports.loop = function () {
-    db.vLog("~~~~~~~~~~~~~~~~"+ Game.time+"~~~~~~~~~~~~~~~~");
+    db.vLog("~~~~~~~~~~~~~~~~| Tick: "+ Game.time+" |~~~~~~~~~~~~~~~~");
     
+    // Census will update our Memory with the game's current state.
     runCensus();
-    var queenObjects = Memory.census['queenObject'];
+ 
+    var queenObjects = Memory.census.queenObject;
 
     for (var queenName in queenObjects){
     	runQueen(queenName);

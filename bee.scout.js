@@ -22,7 +22,7 @@ module.exports = function(queenName){
                 }
                 else {
                     if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom), {maxRooms: 24, maxOps: 5000}) == ERR_NO_PATH){
-                        console.log("Doesn't work")
+                        db.vLog("This doesn't work.")
                     }
                 }
             }

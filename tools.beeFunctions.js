@@ -56,6 +56,16 @@ module.exports = {
                 bee.memory.container = 1;
             }
         }
+    },
+    reserveRoom(bee){
+        if(bee.room.controller) {
+            if(bee.claimController(bee.room.controller) == ERR_NOT_IN_RANGE) {
+                bee.moveTo(bee.room.controller);
+            }
+            else if(bee.reserveController(bee.room.controller) == ERR_INVALID_TARGET){
+                console.log("I'm confused");
+            }
+        }
     }
 }
 

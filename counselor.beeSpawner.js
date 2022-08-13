@@ -1,3 +1,5 @@
+var db = require('tools.debug');
+
 module.exports = function(spawnName, roleName, creepLevel, queenName, metaData){
 	var body = getBody(roleName, creepLevel);
     var name = roleName + "_lvl" + creepLevel + "_" + Game.time.toString();
@@ -5,7 +7,15 @@ module.exports = function(spawnName, roleName, creepLevel, queenName, metaData){
         ...{'role': roleName, 'queen': queenName},
         ...metaData
     }
-    Game.spawns[spawnName].spawnCreep(body, name, {memory: finalMetaData});
+    var spawning = Game.spawns[spawnName].spawnCreep(body, name, {memory: finalMetaData});
+    switch (spawning){
+        case 0: 
+            db.vLog("Spawning " + roleName);
+            break;
+        case ERR_NOT_ENOUGH_RESOURCES: 
+            db.vLog("Not enough resources for " + roleName);
+            break;
+    }
 }
 
 function getBody(role, level){
