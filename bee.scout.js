@@ -32,7 +32,7 @@ module.exports = function(queenName){
                 var queenCheck = false;
                 var completedCheck = true;
                 for (exit in exits){
-                    if ((!remoteRooms[exits[exit]] || ourBee.room.name == queenName) && exits[exit] != queenName){
+                    if ((!remoteRooms[exits[exit]] || !remoteRooms[exits[exit]].armComplete) && exits[exit] != queenName){
                         ourBee.memory.targetRoom = exits[exit];
                         completedCheck = false;
                     }

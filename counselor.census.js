@@ -247,7 +247,7 @@ module.exports = function(){
                         if (beesRole == 'harvester'){
                             queenObject[beesQueen].harvestedSources.push(bee.memory.source);
                         }
-                        else if (beesRole == 'worker'){
+                        else if (beesRole == 'worker' || beesRole == "collector"){
                             var hauledSourceObject = queenObject[beesQueen].hauledSourceObject;
                             if(!hauledSourceObject[localSources[source]]){
                                 queenObject[beesQueen].hauledSourceObject[localSources[source]] = [bee.id];
@@ -290,9 +290,9 @@ module.exports = function(){
                         }
                     }
                 }
-                if (beesRole == "reserver"){
-                    queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].reserverBee = true;
-                }
+            }
+            if (beesRole == "reserver"){
+                queenObject[beesQueen].remoteRooms[bee.memory.remoteRoom].reserverBee = true;
             }
             
 		}

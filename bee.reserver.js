@@ -14,7 +14,7 @@ module.exports = function(queenName){
         var targetRoom = beeObj.memory.remoteRoom;
         var currentRoom = beeObj.room.name;
         if (targetRoom == currentRoom){
-            beeFunc.reserveRoom(beeObj, source)
+            beeFunc.reserveRoom(beeObj)
         }
         else{
             beeObj.moveTo(new RoomPosition(25,25,targetRoom), {visualizePathStyle:{}});

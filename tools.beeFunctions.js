@@ -59,7 +59,7 @@ module.exports = {
     },
     reserveRoom(bee){
         if(bee.room.controller) {
-            if(bee.claimController(bee.room.controller) == ERR_NOT_IN_RANGE) {
+            if(bee.reserveController(bee.room.controller) == ERR_NOT_IN_RANGE) {
                 bee.moveTo(bee.room.controller);
             }
             else if(bee.reserveController(bee.room.controller) == ERR_INVALID_TARGET){

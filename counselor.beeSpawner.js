@@ -15,6 +15,8 @@ module.exports = function(spawnName, roleName, creepLevel, queenName, metaData){
         case ERR_NOT_ENOUGH_RESOURCES: 
             db.vLog("Not enough resources for " + roleName);
             break;
+        case -10:
+            db.vLog("Something wrong with trying to build " + roleName);
     }
 }
 
@@ -28,6 +30,9 @@ function getBody(role, level){
         case "scout": return getBody_Scout(level);
         case "remoteHarvester": return getBody_Harvester(level);
         case "remoteWorker": return getBody_Worker(level);
+        case "reserver": return getBody_Reserver(level);
+        case "collector": return getBody_Collector(level);
+        case "drone": return getBody_Collector(level);
     }
 }
 
@@ -81,5 +86,24 @@ function getBody_Worker(level){
 function getBody_Scout(level){
     switch (level){
         case 1: return [MOVE];
+    }
+}
+
+function getBody_Reserver(level){
+    switch (level){
+        case 3: return [CLAIM, MOVE];
+        case 4: return [CLAIM, MOVE];
+    }
+}
+
+function getBody_Collector(level){
+    switch (level){
+        case 1: return [CARRY, MOVE]
+        case 2: return [CARRY, CARRY, CARRY, CARRY, 
+                        MOVE, MOVE, MOVE, MOVE];
+        case 3: return [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+        case 4: return [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
     }
 }

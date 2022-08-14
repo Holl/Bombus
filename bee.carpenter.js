@@ -4,9 +4,13 @@ var beeFunc = require('tools.beeFunctions')
 
 module.exports = function(queenName, queenObj){
 
+    // Carpenter Bees are the main maintence bees.  They have the job of repairing
+    // and helping build anything that needs built.
+
     var carpenterArray = Memory.census.queenObject[queenName].bees.carpenter; 
     var repairArray = Memory.census.queenObject[queenName].repairStructures;
     for (var bee in carpenterArray){
+        // For every bee in this carptenter array
         var beeName = carpenterArray[bee];
         var ourBee = Game.creeps[beeName];
         if(ourBee.carry.energy == 0){
@@ -44,8 +48,8 @@ module.exports = function(queenName, queenObj){
                     ourBee.repair(storedTarget);
                 }
                 else{
-                    if (repairArray.length > 0 && repairArray[0].id){
-                        ourBee.memory.repairTarget = repairArray[0].id;
+                    if (repairArray.length > 0 && repairArray[0]){
+                        ourBee.memory.repairTarget = repairArray[0];
                         repairArray.splice(0,1);
                     }  
                     else{
@@ -54,15 +58,18 @@ module.exports = function(queenName, queenObj){
                 }
             }
             else {
-                if(queenObj['constructionSites'] && queenObj['constructionSites'].length>0){
-                    var site = queenObj['constructionSites'][0];
+                var constructionSites = Memory.census.queenObject[queenName].constructionSites;
+                if(constructionSites && constructionSites.length>0){
+                    var site = Game.getObjectById(constructionSites[0]);
                     if(ourBee.build(site) == ERR_NOT_IN_RANGE){
                         ourBee.moveTo(site);
                     }
                 }
                 else if(repairArray.length > 0) {
-                    if(ourBee.repair(repairArray[0]) == ERR_NOT_IN_RANGE) {
-                        ourBee.moveTo(repairArray[0], {});
+                    var repairObject = Game.getObjectById(repairArray[0]);
+                    ourBee.memory.repairTarget = repairArray[0];
+                    if(ourBee.repair(repairObject) == ERR_NOT_IN_RANGE) {
+                        ourBee.moveTo(repairObject, {});
                     }
                 }
             }

@@ -1,5 +1,5 @@
 var noHaulers = 2;
-var noShipper = 1;
+var noCollector = 1;
 var noDrones = 2;
 var noUpgraders = 1;
 
@@ -21,6 +21,8 @@ var scoutFunction = require('bee.scout');
 var remoteHarvesterFunction = require('bee.remoteHarvester');
 var remoteWorkerFunction = require('bee.remoteWorker');
 var reserverFunction = require('bee.reserver');
+var collectorFunction = require('bee.collector');
+var droneFunction = require('bee.drone');
 
 
 module.exports = function(queenName){
@@ -41,10 +43,10 @@ module.exports = function(queenName){
         if (!spawnCheck){
             spawnCheck = maintenanceSpawning(queenName, beeLevel, phase);
         }
-        if (!spawnCheck && beeLevel > 2){
+        if (!spawnCheck && phase == "summer"){
             spawnCheck = scoutSpawning(queenName, beeLevel, phase);
         }
-        if (!spawnCheck && beeLevel > 2){
+        if (!spawnCheck && phase == "summer"){
             spawnCheck  = remoteEconomySpawning(queenName, beeLevel, phase);
         }
         if (!spawnCheck){
@@ -64,6 +66,8 @@ module.exports = function(queenName){
     remoteHarvesterFunction(queenName, Memory.census.queenObject[queenName]);
     remoteWorkerFunction(queenName, Memory.census.queenObject[queenName]);
     reserverFunction(queenName);
+    collectorFunction(queenName, Memory.census.queenObject[queenName]);
+    droneFunction(queenName, Memory.census.queenObject[queenName]);
   
     runarchitect(queenName);
 
@@ -154,10 +158,9 @@ function normalEconomySpawning(queenName, beeLevel, phase){
         // If we HAVE a real storage, we can be more specialized, and therefore, CPU efficent.
         // else if (storage) was here, but this all seems crazy.
         else if (storage){
-            if(!shippedSourceObject[localSources[source]] || 
-                shippedSourceObject[localSources[source]].length < noShipper){
+            if(!hauledSourceObject[localSources[source]] || hauledSourceObject[localSources[source]].length < noCollector){
                 creepCreator(inactiveSpawn, 
-                                    'shipper', 
+                                    'collector', 
                                     beeLevel,
                                     queenName,
                                     {'source':localSources[source],
@@ -201,7 +204,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
                         );
         return true;
     }
-    if (droneArray == undefined && queenObject["energyNow"] < 301 && phase == "summer"){
+    if (droneArray == undefined && queenObject["energyNow"] < 301 && storage){
         creepCreator(inactiveSpawn, 
                             'drone', 
                             1,
@@ -209,7 +212,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
                         );
         return true;
     }
-    else if ((droneArray == undefined || droneArray.length < noDrones) && phase == "summer"){
+    else if ((droneArray == undefined || droneArray.length < noDrones) && storage){
         creepCreator(inactiveSpawn, 
                             'drone', 
                             beeLevel,
@@ -259,14 +262,16 @@ function scoutSpawning(queenName, beeLevel, phase){
     var incompleteBool = 0;
 
     for (var exit in exits){
-        if (!remoteRooms[exits[exit]] || !remoteRooms[exits[exit]].armComplete){
+        if (!remoteRooms[exits[exit]]){
+            incompleteBool = 1;
+        }
+        else if (!remoteRooms[exits[exit]].armComplete){
             incompleteBool = 1;
         }
     }
 
     var noScouts = 1;
 
-    
     if (incompleteBool){
         if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
             creepCreator(           inactiveSpawn, 
@@ -285,8 +290,8 @@ function remoteEconomySpawning(queenName, beeLevel, phase){
     var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
     for (var room in remoteRooms){
-        if (remoteRooms[room].owner == false && remoteRooms[room].sources.length > 0 && !remoteRooms[room].owner == null){
-            if (remoteRooms.reserverBee){
+        if (remoteRooms[room].owner == false && remoteRooms[room].sources.length > 0){
+            if (remoteRooms[room].reserverBee){
                 var sources = remoteRooms[room].sources;
                 var harvestedSourceArray = [];
                 harvestedSourceArray = remoteRooms[room].harvestedSources;
