@@ -104,8 +104,10 @@ module.exports = function(){
             }
             var oldLevel = 1;
             if (Memory.census){
-                if(Memory.census.queenObject[name].level){
-                    oldLevel = Memory.census.queenObject[name].level;
+                if (Memory.census.queenObject[name]){
+                    if(Memory.census.queenObject[name].level){
+                        oldLevel = Memory.census.queenObject[name].level;
+                    }
                 }
             }
             var level = Game.spawns[spawn].room.controller.level;
@@ -124,11 +126,13 @@ module.exports = function(){
             }
             var remoteRooms = {};
             if (Memory.census){
-                if(Memory.census.queenObject[name].remoteRooms){
-                    remoteRooms = Memory.census.queenObject[name].remoteRooms;
-                    for (var room in remoteRooms){
-                        remoteRooms[room].hauledSourceObject = {};
-                        remoteRooms[room].harvestedSources = [];
+                if (Memory.census.queenObject[name]){
+                    if(Memory.census.queenObject[name].remoteRooms){
+                        remoteRooms = Memory.census.queenObject[name].remoteRooms;
+                        for (var room in remoteRooms){
+                            remoteRooms[room].hauledSourceObject = {};
+                            remoteRooms[room].harvestedSources = [];
+                        }
                     }
                 }
             }
