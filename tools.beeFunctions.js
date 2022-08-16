@@ -39,11 +39,11 @@ module.exports = {
         if(bee.harvest(source) == ERR_NOT_IN_RANGE || bee.harvest(source) == ERR_BUSY) {
             if (bee.memory.pickupID){
                 var container = Game.getObjectById(bee.memory.pickupID);
-                bee.moveTo(container, {ignoreCreeps: true});
+                bee.moveTo(container);
             }
             else{
                 bee.memory.pickupID = common.findContainerIDFromSource(source.id);
-                bee.moveTo(source, {ignoreCreeps: true});
+                bee.moveTo(source);
             }
             
         }

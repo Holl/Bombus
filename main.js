@@ -13,12 +13,15 @@ var db = require('tools.debug');
 
 var runCensus = require('counselor.census');
 var runQueen = require('ai.queen')
+var runEmpress =  require('ai.empress');
 
 module.exports.loop = function () {
     db.vLog("~~~~~~~~~~~~~~~~| Tick: "+ Game.time+" |~~~~~~~~~~~~~~~~");
     
     // Census will update our Memory with the game's current state.
     runCensus();
+
+    runEmpress();
  
     var queenObjects = Memory.census.queenObject;
 
