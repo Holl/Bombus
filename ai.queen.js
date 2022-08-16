@@ -255,35 +255,51 @@ function maintenanceSpawning(queenName, beeLevel, phase){
 
 function scoutSpawning(queenName, beeLevel, phase){
     var scoutArray = Memory.census.queenObject[queenName].bees.scout;
-    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
-    var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
-
-    var exits = Game.map.describeExits(queenName);
-    var incompleteBool = 0;
-
-    for (var exit in exits){
-        if (!remoteRooms[exits[exit]]){
-            incompleteBool = 1;
-        }
-        else if (!remoteRooms[exits[exit]].armComplete){
-            incompleteBool = 1;
-        }
-    }
-
-    var noScouts = 1;
-
-    if (incompleteBool){
+    if (Memory.census.queenObject[queenName].imperialOrder.type == "expand"){
+        var noScouts = 1;
         if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
+            
             creepCreator(           inactiveSpawn, 
                                     'scout', 
                                     1,
                                     queenName,
-                                    {'mission':'remote'}
+                                    {'mission':'expand'}
                                 );
             return true;
+            
         }
     }
     return false;
+    // var scoutArray = Memory.census.queenObject[queenName].bees.scout;
+    // var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+    // var remoteRooms = Memory.census.queenObject[queenName].remoteRooms;
+
+    // var exits = Game.map.describeExits(queenName);
+    // var incompleteBool = 0;
+
+    // for (var exit in exits){
+    //     if (!remoteRooms[exits[exit]]){
+    //         incompleteBool = 1;
+    //     }
+    //     else if (!remoteRooms[exits[exit]].armComplete){
+    //         incompleteBool = 1;
+    //     }
+    // }
+
+    // var noScouts = 1;
+
+    // if (incompleteBool){
+    //     if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
+    //         creepCreator(           inactiveSpawn, 
+    //                                 'scout', 
+    //                                 1,
+    //                                 queenName,
+    //                                 {'mission':'remote'}
+    //                             );
+    //         return true;
+    //     }
+    // }
+    // return false;
 }
 
 function remoteEconomySpawning(queenName, beeLevel, phase){

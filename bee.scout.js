@@ -54,5 +54,28 @@ module.exports = function(queenName){
                 };
             }
         }
+        else if (ourBee.memory.mission == "expand"){
+            if (ourBee.memory.targetRoom){
+                if (ourBee.memory.targetRoom == currentRoomName){
+                    ourBee.moveTo(25,25,ourBee.memory.targetRoom);
+                    var data = common.scoutSnapshot(currentRoomName);
+                    if(!Memory.census.empireObject.territoryObject[currentRoomName]){
+                        Memory.census.empireObject.territoryObject[currentRoomName] = data;
+                    }
+                    Memory.census.empireObject.potentialTerritoryArray.shift();
+                    ourBee.memory.targetRoom = null;
+                }
+                else {
+                    if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom), {maxRooms: 24, maxOps: 5000}) == ERR_NO_PATH){
+                        db.vLog("This doesn't work.")
+                    }
+                };
+            }
+            else{
+                if (Memory.census.empireObject.potentialTerritoryArray){
+                    ourBee.memory.targetRoom = Memory.census.empireObject.potentialTerritoryArray[0];
+                }
+            }
+        }
 	}
 }
