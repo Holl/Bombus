@@ -77,11 +77,21 @@ module.exports = function(queenName){
                     Memory.census.queenObject[queenName].thirstyStructures[0].thirst = Memory.census.queenObject[queenName].thirstyStructures[0].thirst - bee.carry.energy;
                 }
             }
+            else if (bee.memory.constructionId){
+                var site = Game.getObjectById(bee.memory.constructionId);
+                if(bee.build(site) == ERR_NOT_IN_RANGE){
+                    bee.moveTo(site);
+                }
+                else if(bee.build(site) == -7){
+                    bee.memory.constructionId = null;
+                }
+            }
             else if (Memory.census.queenObject[queenName].constructionSites.length > 0){
                 var site = Game.getObjectById(Memory.census.queenObject[queenName].constructionSites[0]);
                 if(bee.build(site) == ERR_NOT_IN_RANGE){
                     bee.moveTo(site);
                 }
+                bee.memory.constructionId=site.id;
             }
             else{
                 common.upgradeController(bee);
