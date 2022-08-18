@@ -139,6 +139,7 @@ module.exports = function(){
     
             // And add it to the object:
 			queenObject[name] = {
+                "imperialOrder":{},
                 "energyNow": Game.spawns[spawn].room.energyAvailable,
                 "energyMax": Game.spawns[spawn].room.energyCapacityAvailable,
                 "localSources": localSources,

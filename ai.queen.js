@@ -183,7 +183,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
             return true;
         }
     }
-    noUpgraders = 1;
+    noUpgraders = 2;
     if (storage){
         var storEng = Game.getObjectById(storage).store.energy;
         if (storEng > 250000){

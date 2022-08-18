@@ -16,11 +16,14 @@ module.exports = function(){
             Memory.census.empireObject.potentialTerritoryArray = potentialTerritoryScan(queen, 25)
         }
     }
+    
+    var levelCount = empireObject.gcl.level;
 
-    if (queenCount < empireObject.gcl.level){
-        for (var queen in queenObject){
+    for (var queen in queenObject){
+        if (queenCount < levelCount){
             if (queenObject[queen].storage == true && queenObject[queen].energyMax == 1300){
                 Memory.census.queenObject[queen].imperialOrder = {type: "expand"}
+                levelCount--;
             }
         }
     }
