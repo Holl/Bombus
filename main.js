@@ -10,6 +10,7 @@
 // Bombus AI is a screeps AI, designed as an imagined cluster of bee hives.
 
 var db = require('tools.debug');
+var commmon = require('tools.commonFunctions');
 
 var runCensus = require('counselor.census');
 var runQueen = require('ai.queen')

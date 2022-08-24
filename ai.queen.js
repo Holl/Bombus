@@ -23,6 +23,9 @@ var remoteWorkerFunction = require('bee.remoteWorker');
 var reserverFunction = require('bee.reserver');
 var collectorFunction = require('bee.collector');
 var droneFunction = require('bee.drone');
+var captorFunction = require('bee.captor');
+var captorWorkerFunction = require('bee.captorWorker')
+
 
 
 module.exports = function(queenName){
@@ -31,6 +34,8 @@ module.exports = function(queenName){
     var phase = determineQueenPhase(queenName);
     var inactiveSpawns = Memory.census.queenObject[queenName].inactiveSpawns;
     var energyMax = Memory.census.queenObject[queenName].energyMax;
+
+    var order = Memory.census.queenObject[queenName].imperialOrder.type;
     
     if(inactiveSpawns.length > 0){
 
@@ -43,8 +48,11 @@ module.exports = function(queenName){
         if (!spawnCheck){
             spawnCheck = maintenanceSpawning(queenName, beeLevel, phase);
         }
-        if (!spawnCheck && phase == "summer"){
+        if (!spawnCheck && phase == "summer" && order == "expand"){
             spawnCheck = scoutSpawning(queenName, beeLevel, phase);
+        }
+        if (!spawnCheck && phase == "summer" && order == "expand"){
+            spawnCheck = captureSpawning(queenName, beeLevel, phase);
         }
         if (!spawnCheck && phase == "summer"){
             spawnCheck  = remoteEconomySpawning(queenName, beeLevel, phase);
@@ -68,6 +76,8 @@ module.exports = function(queenName){
     reserverFunction(queenName);
     collectorFunction(queenName, Memory.census.queenObject[queenName]);
     droneFunction(queenName, Memory.census.queenObject[queenName]);
+    captorFunction(queenName, Memory.census.queenObject[queenName]);
+    captorWorkerFunction(queenName, Memory.census.queenObject[queenName]);
   
     runarchitect(queenName);
 
@@ -124,6 +134,14 @@ function normalEconomySpawning(queenName, beeLevel, phase){
 
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
 
+    if (phase == "summer" && droneArray == undefined){
+        creepCreator(inactiveSpawn, 
+            'drone', 
+            1,
+            queenName
+        );
+        return true;
+    }
     // Which should give us everyting we need.
     // So, for all our local sources:
     for (var source in localSources){
@@ -301,6 +319,39 @@ function scoutSpawning(queenName, beeLevel, phase){
     //     }
     // }
     // return false;
+}
+
+function captureSpawning(queenName, beeLevel, phase){
+    var territoryObject = Memory.census.empireObject.territoryObject;
+
+    for (var room in territoryObject){
+        if (territoryObject[room].spawnLoc){
+            var captureArray = Memory.census.queenObject[queenName].bees.captor;
+            var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+            if(typeof captureArray == 'undefined'){
+                db.vLog("Spawning Captor.");
+                creepCreator(inactiveSpawn, 
+                                            'captor', 
+                                            beeLevel,
+                                            queenName,
+                                            {'targetRoom':room}
+                                        );
+                return true;
+            }
+            var captorBuilderArray = Memory.census.queenObject[queenName].bees.captorBuilder;
+            if (typeof captorBuilderArray == 'undefined' ||
+            captorBuilderArray.length < 4){
+                db.vLog("Spawning Captor Builder.");
+                creepCreator(inactiveSpawn, 
+                                            'captorBuilder', 
+                                            beeLevel,
+                                            queenName,
+                                            {'targetRoom':room}
+                                        );
+                return true;
+            }
+        }
+    }
 }
 
 function remoteEconomySpawning(queenName, beeLevel, phase){

@@ -61,10 +61,12 @@ module.exports = function(queenName){
                     var data = common.scoutSnapshot(currentRoomName);
                     if(!Memory.census.empireObject.territoryObject[currentRoomName]){
                         Memory.census.empireObject.territoryObject[currentRoomName] = data;
+                        if (data.sources.length == 2 && data.owner == false){
+                            var center = common.findCenterSpawnLocation(currentRoomName);
+                            Memory.census.empireObject.territoryObject[currentRoomName].spawnLoc = center;
+                        }
                     }
-                    console.log(Memory.census.empireObject.potentialTerritoryArray[0]);
                     Memory.census.empireObject.potentialTerritoryArray.shift();
-                    console.log(Memory.census.empireObject.potentialTerritoryArray[0]);
                     ourBee.memory.targetRoom = null;
                 }
                 else {
