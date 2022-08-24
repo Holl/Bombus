@@ -1,6 +1,6 @@
 var common = require('tools.commonFunctions');
 var db = require('tools.debug');
-var beeFunc = require('tools.beeFunctions')
+var beeFunc = require('tools.beeFunctions');
 
 module.exports = function(queenName){
 
@@ -62,11 +62,13 @@ module.exports = function(queenName){
                     if(!Memory.census.empireObject.territoryObject[currentRoomName]){
                         Memory.census.empireObject.territoryObject[currentRoomName] = data;
                     }
+                    console.log(Memory.census.empireObject.potentialTerritoryArray[0]);
                     Memory.census.empireObject.potentialTerritoryArray.shift();
+                    console.log(Memory.census.empireObject.potentialTerritoryArray[0]);
                     ourBee.memory.targetRoom = null;
                 }
                 else {
-                    if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom), {maxRooms: 24, maxOps: 5000}) == ERR_NO_PATH){
+                    if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom)) == ERR_NO_PATH){
                         db.vLog("This doesn't work.")
                     }
                 };

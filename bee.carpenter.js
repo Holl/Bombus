@@ -57,21 +57,25 @@ module.exports = function(queenName, queenObj){
                     }
                 }
             }
-            else {
-                var constructionSites = Memory.census.queenObject[queenName].constructionSites;
-                if(constructionSites && constructionSites.length>0){
-                    var site = Game.getObjectById(constructionSites[0]);
-                    if(ourBee.build(site) == ERR_NOT_IN_RANGE){
-                        ourBee.moveTo(site);
-                    }
+            else if (ourBee.memory.constructionId){
+                var site = Game.getObjectById(ourBee.memory.constructionId);
+                if(ourBee.build(site) == ERR_NOT_IN_RANGE){
+                    ourBee.moveTo(site);
                 }
-                else if(repairArray.length > 0) {
-                    var repairObject = Game.getObjectById(repairArray[0]);
-                    ourBee.memory.repairTarget = repairArray[0];
-                    if(ourBee.repair(repairObject) == ERR_NOT_IN_RANGE) {
-                        ourBee.moveTo(repairObject, {});
-                    }
+                else if(ourBee.build(site) == -7){
+                    ourBee.memory.constructionId = null;
                 }
+
+            }
+            else if(repairArray.length > 0){
+                ourBee.memory.repairTarget = repairArray[0];
+            }
+            else if (Memory.census.queenObject[queenName].constructionSites.length > 0){
+                var site = Game.getObjectById(Memory.census.queenObject[queenName].constructionSites[0]);
+                if(ourBee.build(site) == ERR_NOT_IN_RANGE){
+                    ourBee.moveTo(site);
+                }
+                ourBee.memory.constructionId=site.id;
             }
         }
     }

@@ -125,6 +125,8 @@ module.exports = function(){
                 }
             }
             var remoteRooms = {};
+            var potentialTerritoryArray = [];
+            var territoryObject = {};
             if (Memory.census){
                 if (Memory.census.queenObject[name]){
                     if(Memory.census.queenObject[name].remoteRooms){
@@ -133,6 +135,14 @@ module.exports = function(){
                             remoteRooms[room].hauledSourceObject = {};
                             remoteRooms[room].harvestedSources = [];
                         }
+                    }
+                }
+                if (Memory.census.empireObject){
+                    if (Memory.census.empireObject.potentialTerritoryArray){
+                        potentialTerritoryArray = Memory.census.empireObject.potentialTerritoryArray
+                    }
+                    if (Memory.census.empireObject.territoryObject){
+                        territoryObject =Memory.census.empireObject.territoryObject
                     }
                 }
             }
@@ -317,6 +327,8 @@ module.exports = function(){
 
     empireObject['gcl'] = Game.gcl;
     empireObject['freeBee'] = freeBeeArray;
+    empireObject.territoryObject = territoryObject;
+    empireObject.potentialTerritoryArray = potentialTerritoryArray;
 
     censusObject = {empireObject, queenObject};
 

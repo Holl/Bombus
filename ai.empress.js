@@ -11,7 +11,7 @@ module.exports = function(){
     if (Memory.census.empireObject.territoryObject){
         territoryObject = Memory.census.empireObject.territoryObject;
     }
-    else if (!Memory.census.empireObject.potentialTerritoryArray){
+    if (!Memory.census.empireObject.potentialTerritoryArray){
         for (var queen in queenObject){
             Memory.census.empireObject.potentialTerritoryArray = potentialTerritoryScan(queen, 25)
         }
@@ -21,7 +21,7 @@ module.exports = function(){
 
     for (var queen in queenObject){
         if (queenCount < levelCount){
-            if (queenObject[queen].storage == true && queenObject[queen].energyMax == 1300){
+            if (queenObject[queen].storage && queenObject[queen].energyMax == 1300){
                 Memory.census.queenObject[queen].imperialOrder = {type: "expand"}
                 levelCount--;
             }

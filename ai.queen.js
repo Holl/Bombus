@@ -255,13 +255,14 @@ function maintenanceSpawning(queenName, beeLevel, phase){
 
 function scoutSpawning(queenName, beeLevel, phase){
     var scoutArray = Memory.census.queenObject[queenName].bees.scout;
+    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
     if (Memory.census.queenObject[queenName].imperialOrder.type == "expand"){
         var noScouts = 1;
         if (scoutArray && scoutArray.length < noScouts || (!scoutArray && noScouts > 0)){
             
             creepCreator(           inactiveSpawn, 
                                     'scout', 
-                                    1,
+                                    beeLevel,
                                     queenName,
                                     {'mission':'expand'}
                                 );
