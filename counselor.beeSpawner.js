@@ -33,6 +33,8 @@ function getBody(role, level){
         case "reserver": return getBody_Reserver(level);
         case "collector": return getBody_Collector(level);
         case "drone": return getBody_Collector(level);
+        case "captor": return getBody_Capture(level);
+        case "captorBuilder": return getBody_CaptorBuilder(level);
     }
 }
 
@@ -86,6 +88,10 @@ function getBody_Worker(level){
 function getBody_Scout(level){
     switch (level){
         case 1: return [MOVE];
+        case 2: return [MOVE, TOUGH];
+        case 3: return [MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
+        case 4: return [TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH,
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     }
 }
 
@@ -105,5 +111,27 @@ function getBody_Collector(level){
                         MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
         case 4: return [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
                         MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+    }
+}
+
+function getBody_Capture(level){
+    switch (level){
+        case 3: return [CLAIM, MOVE];
+        case 4: return [CLAIM, MOVE];
+    }
+}
+
+function getBody_CaptorBuilder(level){
+    switch (level){
+        case 3: return [
+                        CARRY, CARRY, CARRY,
+                        WORK, WORK, WORK,
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+                        ];
+        case 4: return [
+                        CARRY, CARRY, CARRY,
+                        WORK, WORK, WORK,
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+                        ];
     }
 }

@@ -1,6 +1,6 @@
 var common = require('tools.commonFunctions');
 var db = require('tools.debug');
-var beeFunc = require('tools.beeFunctions')
+var beeFunc = require('tools.beeFunctions');
 
 module.exports = function(queenName){
 
@@ -61,12 +61,16 @@ module.exports = function(queenName){
                     var data = common.scoutSnapshot(currentRoomName);
                     if(!Memory.census.empireObject.territoryObject[currentRoomName]){
                         Memory.census.empireObject.territoryObject[currentRoomName] = data;
+                        if (data.sources.length == 2 && data.owner == false){
+                            var center = common.findCenterSpawnLocation(currentRoomName);
+                            Memory.census.empireObject.territoryObject[currentRoomName].spawnLoc = center;
+                        }
                     }
                     Memory.census.empireObject.potentialTerritoryArray.shift();
                     ourBee.memory.targetRoom = null;
                 }
                 else {
-                    if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom), {maxRooms: 24, maxOps: 5000}) == ERR_NO_PATH){
+                    if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom)) == ERR_NO_PATH){
                         db.vLog("This doesn't work.")
                     }
                 };
