@@ -7,23 +7,37 @@ module.exports = function(){
     var empireObject = Memory.census.empireObject;
     var queenObject = Memory.census.queenObject;
     var queenCount = Object.keys(queenObject).length;
-    var territoryObject = {};
-    if (Memory.census.empireObject.territoryObject){
-        territoryObject = Memory.census.empireObject.territoryObject;
-    }
-    if (!Memory.census.empireObject.potentialTerritoryArray || Memory.census.empireObject.potentialTerritoryArray.length == 0){
-        for (var queen in queenObject){
-            Memory.census.empireObject.potentialTerritoryArray = potentialTerritoryScan(queen, 25)
-        }
-    }
     
     var levelCount = empireObject.gcl.level;
 
     for (var queen in queenObject){
         if (queenCount < levelCount){
-            if (queenObject[queen].storage && queenObject[queen].energyMax >= 1300){
-                Memory.census.queenObject[queen].imperialOrder = {type: "expand"}
+            if (Memory.census.queenObject[queen].imperialOrder.type == "none"){
+                if (queenObject[queen].storage && queenObject[queen].energyMax >= 1300){
+                    Memory.census.queenObject[queen].imperialOrder.type = "expand";
+                    Memory.census.queenObject[queen].imperialOrder.potentialTerritory = potentialTerritoryScan(queen, 25);
+                    levelCount--;
+                }
+            }
+            else if (Memory.census.queenObject[queen].imperialOrder.type == "expand"){
+                if (Memory.census.queenObject[queen].territoryObject){
+                    var territory = Memory.census.queenObject[queen].territoryObject;
+                    for (var room in territory){
+                        if (territory[room].spawnLoc){
+                            Memory.census.queenObject[queen].imperialOrder.type = "capture";
+                            Memory.census.queenObject[queen].imperialOrder.target = room;
+                        }
+                    }
+                }
                 levelCount--;
+            }
+            else if (Memory.census.queenObject[queen].imperialOrder.type == "capture"){
+                var target = Memory.census.queenObject[queen].imperialOrder.target;
+                if (Memory.census.queenObject[target]){
+                    if (Memory.census.queenObject[target].energyMax >= 800){
+                        Memory.census.queenObject[queen].imperialOrder = {type:"none"};
+                    }
+                }
             }
         }
     }

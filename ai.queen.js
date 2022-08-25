@@ -51,7 +51,7 @@ module.exports = function(queenName){
         if (!spawnCheck && phase == "summer" && order == "expand"){
             spawnCheck = scoutSpawning(queenName, beeLevel, phase);
         }
-        if (!spawnCheck && phase == "summer" && order == "expand"){
+        if (!spawnCheck && phase == "summer" && order == "capture"){
             spawnCheck = captureSpawning(queenName, beeLevel, phase);
         }
         if (!spawnCheck && phase == "summer"){
@@ -322,35 +322,32 @@ function scoutSpawning(queenName, beeLevel, phase){
 }
 
 function captureSpawning(queenName, beeLevel, phase){
-    var territoryObject = Memory.census.empireObject.territoryObject;
+    var territoryObject = Memory.census.queenObject[queenName].territoryObject;
+    var target = Memory.census.queenObject[queenName].imperialOrder.target;
 
-    for (var room in territoryObject){
-        if (territoryObject[room].spawnLoc){
-            var captureArray = Memory.census.queenObject[queenName].bees.captor;
-            var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
-            if(typeof captureArray == 'undefined'){
-                db.vLog("Spawning Captor.");
-                creepCreator(inactiveSpawn, 
-                                            'captor', 
-                                            beeLevel,
-                                            queenName,
-                                            {'targetRoom':room}
-                                        );
-                return true;
-            }
-            var captorBuilderArray = Memory.census.queenObject[queenName].bees.captorBuilder;
-            if (typeof captorBuilderArray == 'undefined' ||
-            captorBuilderArray.length < 4){
-                db.vLog("Spawning Captor Builder.");
-                creepCreator(inactiveSpawn, 
-                                            'captorBuilder', 
-                                            beeLevel,
-                                            queenName,
-                                            {'targetRoom':room}
-                                        );
-                return true;
-            }
-        }
+    var captureArray = Memory.census.queenObject[queenName].bees.captor;
+    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+    if(typeof captureArray == 'undefined'){
+        db.vLog("Spawning Captor.");
+        creepCreator(inactiveSpawn, 
+                                    'captor', 
+                                    beeLevel,
+                                    queenName,
+                                    {'targetRoom':target}
+                                );
+        return true;
+    }
+    var captorBuilderArray = Memory.census.queenObject[queenName].bees.captorBuilder;
+    if (typeof captorBuilderArray == 'undefined' ||
+    captorBuilderArray.length < 4){
+        db.vLog("Spawning Captor Builder.");
+        creepCreator(inactiveSpawn, 
+                                    'captorBuilder', 
+                                    beeLevel,
+                                    queenName,
+                                    {'targetRoom':target}
+                                );
+        return true;
     }
 }
 
@@ -432,15 +429,17 @@ function determineQueenPhase(queenName){
 
     // If we're below level 4, or we don't have a storage,
     // we're still in a growth phase and we should consider it 
-    // "Spring".  
-    
-    if (queenLevel < 4 || storage == false){
-        return "spring";
+    // "Spring".
+    var storEng = 0;  
+    if (storage){
+        storEng = Game.getObjectById(storage).store.energy
     }
-    // Otherwise, if we ahve those things, we're ready for more specalized 
-    // bees and we're in "Summer"
-    else{
+
+    if (queenLevel > 4 && storEng > 10000){
         return "summer";
+    }
+    else{
+        return "spring";
     }
 }
 

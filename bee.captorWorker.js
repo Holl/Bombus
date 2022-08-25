@@ -44,6 +44,29 @@ module.exports = function(queenName){
                         bee.moveTo(constructs[0], {visualizePathStyle: {stroke: '#ffffff'}});
                     }
                 }
+                else if(bee.memory.deliveryTargetID){
+                    var deliveryID = bee.memory.deliveryTargetID;
+                    var deliveryObj = Game.getObjectById(deliveryID);
+                    if(bee.transfer(deliveryObj, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        bee.moveTo(deliveryObj);
+                    }
+                    if(bee.transfer(deliveryObj, RESOURCE_ENERGY) == ERR_FULL){
+                        bee.memory.deliveryTargetID = '';
+                    }
+                }
+                else if (Memory.census.queenObject[bee.memory.targetRoom] && Memory.census.queenObject[bee.memory.targetRoom].thirstyStructures.length>0){
+
+                    // If we don't have a delivery target, grab the first on the list
+                    // and reduce or remove it from the list.
+                    bee.memory.deliveryTargetID = Memory.census.queenObject[bee.memory.targetRoom].thirstyStructures[0].id;
+    
+                    if (Memory.census.queenObject[bee.memory.targetRoom].thirstyStructures[0].thirst < bee.carry.energy){
+                        Memory.census.queenObject[bee.memory.targetRoom].thirstyStructures.splice(0,1);
+                    }
+                    else{
+                        Memory.census.queenObject[bee.memory.targetRoom].thirstyStructures[0].thirst = Memory.census.queenObject[bee.memory.targetRoom].thirstyStructures[0].thirst - bee.carry.energy;
+                    }
+                }
                 else {
                     common.upgradeController(bee);
                 }

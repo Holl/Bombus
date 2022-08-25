@@ -59,27 +59,51 @@ module.exports = function(queenName){
                 if (ourBee.memory.targetRoom == currentRoomName){
                     ourBee.moveTo(25,25,ourBee.memory.targetRoom);
                     var data = common.scoutSnapshot(currentRoomName);
-                    if(!Memory.census.empireObject.territoryObject[currentRoomName]){
-                        Memory.census.empireObject.territoryObject[currentRoomName] = data;
+                    if(!Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName]){
+                        Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName] = data;
                         if (data.sources.length == 2 && data.owner == false){
                             var center = common.findCenterSpawnLocation(currentRoomName);
-                            Memory.census.empireObject.territoryObject[currentRoomName].spawnLoc = center;
+                            Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName].spawnLoc = center;
                         }
                     }
-                    Memory.census.empireObject.potentialTerritoryArray.shift();
+                    removeRoomWhenScouted(currentRoomName, ourBee.memory.queen);
                     ourBee.memory.targetRoom = null;
                 }
                 else {
                     if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom)) == ERR_NO_PATH){
-                        db.vLog("This doesn't work.")
+                        if(!Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName]){
+                            Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName] = false;
+                        }                   
+                        removeRoomWhenScouted(currentRoomName, ourBee.memory.queen);
+                        ourBee.memory.targetRoom = null;
                     }
                 };
             }
             else{
-                if (Memory.census.empireObject.potentialTerritoryArray){
-                    ourBee.memory.targetRoom = Memory.census.empireObject.potentialTerritoryArray[0];
+                if (Memory.census.queenObject[ourBee.memory.queen].imperialOrder.potentialTerritory){
+                    var territoryArray = Memory.census.queenObject[ourBee.memory.queen].imperialOrder.potentialTerritory;
+                    var distance = 1000;
+                    var finalRoom = '';
+                    for (var room in territoryArray){
+                        var calculatedDistance = Game.map.getRoomLinearDistance(ourBee.memory.queen, territoryArray[room]);
+                        if (calculatedDistance < distance){
+                            distance = calculatedDistance;
+                            finalRoom = territoryArray[room];
+                        }
+                    }
+                    ourBee.memory.targetRoom = finalRoom;
                 }
             }
         }
 	}
+}
+
+function removeRoomWhenScouted(room, queenName){
+    var array = Memory.census.queenObject[queenName].imperialOrder.potentialTerritory;
+
+    var test = array.indexOf(room);
+    if (test > -1){
+        array.splice(test, 1);
+        Memory.census.queenObject[queenName].imperialOrder.potentialTerritory = array;
+    }
 }

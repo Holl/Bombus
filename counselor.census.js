@@ -125,10 +125,14 @@ module.exports = function(){
                 }
             }
             var remoteRooms = {};
-            var potentialTerritoryArray = [];
+            var potentialTerritory = [];
             var territoryObject = {};
+            var imperialOrder = {type: "none"};
             if (Memory.census){
                 if (Memory.census.queenObject[name]){
+                    if (Memory.census.queenObject[name].imperialOrder){
+                        imperialOrder = Memory.census.queenObject[name].imperialOrder;
+                    }
                     if(Memory.census.queenObject[name].remoteRooms){
                         remoteRooms = Memory.census.queenObject[name].remoteRooms;
                         for (var room in remoteRooms){
@@ -136,20 +140,19 @@ module.exports = function(){
                             remoteRooms[room].harvestedSources = [];
                         }
                     }
-                }
-                if (Memory.census.empireObject){
-                    if (Memory.census.empireObject.potentialTerritoryArray){
-                        potentialTerritoryArray = Memory.census.empireObject.potentialTerritoryArray
+                    if (Memory.census.queenObject[name].potentialTerritory){
+                        potentialTerritory = Memory.census.queenObject[name].potentialTerritory;
                     }
-                    if (Memory.census.empireObject.territoryObject){
-                        territoryObject =Memory.census.empireObject.territoryObject
+                    if (Memory.census.queenObject[name].territoryObject){
+                        territoryObject = Memory.census.queenObject[name].territoryObject;
                     }
                 }
             }
+
     
             // And add it to the object:
 			queenObject[name] = {
-                "imperialOrder":{},
+                "imperialOrder": imperialOrder,
                 "energyNow": Game.spawns[spawn].room.energyAvailable,
                 "energyMax": Game.spawns[spawn].room.energyCapacityAvailable,
                 "localSources": localSources,
@@ -165,7 +168,9 @@ module.exports = function(){
                 "levelUpBool": levelUpBool,
                 "hostilePower": hostilePower,
                 "storage": storageBool,
-                "remoteRooms": remoteRooms
+                "remoteRooms": remoteRooms,
+                "potentialTerritory" : potentialTerritory,
+                "territoryObject" : territoryObject
             };
 		}
 	};
@@ -327,8 +332,6 @@ module.exports = function(){
 
     empireObject['gcl'] = Game.gcl;
     empireObject['freeBee'] = freeBeeArray;
-    empireObject.territoryObject = territoryObject;
-    empireObject.potentialTerritoryArray = potentialTerritoryArray;
 
     censusObject = {empireObject, queenObject};
 
