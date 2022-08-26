@@ -82,12 +82,12 @@ module.exports = function(queenName){
             else{
                 if (Memory.census.queenObject[ourBee.memory.queen].imperialOrder.potentialTerritory){
                     var territoryArray = Memory.census.queenObject[ourBee.memory.queen].imperialOrder.potentialTerritory;
-                    var distance = 1000;
+                    var distance = 10000;
                     var finalRoom = '';
                     for (var room in territoryArray){
-                        var calculatedDistance = Game.map.getRoomLinearDistance(ourBee.memory.queen, territoryArray[room]);
-                        if (calculatedDistance < distance){
-                            distance = calculatedDistance;
+                        var calculatedDistance = Game.map.findRoute(ourBee.memory.queen, territoryArray[room]);
+                        if (calculatedDistance.length < distance){
+                            distance = calculatedDistance.length;
                             finalRoom = territoryArray[room];
                         }
                     }

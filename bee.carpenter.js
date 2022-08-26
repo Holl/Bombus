@@ -67,15 +67,15 @@ module.exports = function(queenName, queenObj){
                 }
 
             }
-            else if(repairArray.length > 0){
-                ourBee.memory.repairTarget = repairArray[0];
-            }
             else if (Memory.census.queenObject[queenName].constructionSites.length > 0){
                 var site = Game.getObjectById(Memory.census.queenObject[queenName].constructionSites[0]);
                 if(ourBee.build(site) == ERR_NOT_IN_RANGE){
                     ourBee.moveTo(site);
                 }
                 ourBee.memory.constructionId=site.id;
+            }
+            else if(repairArray.length > 0){
+                ourBee.memory.repairTarget = repairArray[0];
             }
         }
     }

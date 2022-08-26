@@ -130,7 +130,10 @@ module.exports = function(){
             var imperialOrder = {type: "none"};
             if (Memory.census){
                 if (Memory.census.queenObject[name]){
-                    if (Memory.census.queenObject[name].imperialOrder){
+                    if (Object.keys(Memory.census.queenObject[name].imperialOrder).length === 0){
+                        var imperialOrder = {type: "none"};
+                    }
+                    else if (Memory.census.queenObject[name].imperialOrder){
                         imperialOrder = Memory.census.queenObject[name].imperialOrder;
                     }
                     if(Memory.census.queenObject[name].remoteRooms){

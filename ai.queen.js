@@ -30,7 +30,10 @@ var captorWorkerFunction = require('bee.captorWorker')
 
 module.exports = function(queenName){
     db.vLog("~~~~~~~~| Queen:" + queenName + " |~~~~~~~~");
-
+    var queenObj = Memory.census.queenObject[queenName]
+    db.vLog("Level "+queenObj['level']+".")
+    db.vLog("Hostile power is currently " + queenObj['hostilePower'] +".");
+    db.vLog("Currently "+queenObj["energyNow"]+" out of a possible "+queenObj["energyMax"]+ " energy.")
     var phase = determineQueenPhase(queenName);
     var inactiveSpawns = Memory.census.queenObject[queenName].inactiveSpawns;
     var energyMax = Memory.census.queenObject[queenName].energyMax;
@@ -256,8 +259,9 @@ function maintenanceSpawning(queenName, beeLevel, phase){
     var level = Memory.census.queenObject[queenName].level;
     var noCarpenters = 1;
     if (phase == "summer"){
-        // TODO: logical summer storage calculations
+        noCarpenters++;
     }
+    
     if (level > 1){
         if (carpenterArray && carpenterArray.length < noCarpenters || (!carpenterArray && noCarpenters > 0)){
             creepCreator(           inactiveSpawn, 
@@ -435,7 +439,7 @@ function determineQueenPhase(queenName){
         storEng = Game.getObjectById(storage).store.energy
     }
 
-    if (queenLevel > 4 && storEng > 10000){
+    if (queenLevel >= 4 && storEng > 10000){
         return "summer";
     }
     else{
