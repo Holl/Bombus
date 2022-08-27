@@ -56,12 +56,13 @@ module.exports = function(queenName){
         }
         else if (ourBee.memory.mission == "expand"){
             if (ourBee.memory.targetRoom){
+                console.log(ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom)));
                 if (ourBee.memory.targetRoom == currentRoomName){
                     ourBee.moveTo(25,25,ourBee.memory.targetRoom);
                     var data = common.scoutSnapshot(currentRoomName);
                     if(!Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName]){
                         Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName] = data;
-                        if (data.sources.length == 2 && data.owner == false){
+                        if (data.sources.length == 2){
                             var center = common.findCenterSpawnLocation(currentRoomName);
                             Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName].spawnLoc = center;
                         }
@@ -74,7 +75,7 @@ module.exports = function(queenName){
                         if(!Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName]){
                             Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName] = false;
                         }                   
-                        removeRoomWhenScouted(currentRoomName, ourBee.memory.queen);
+                        removeRoomWhenScouted(ourBee.memory.targetRoom, ourBee.memory.queen);
                         ourBee.memory.targetRoom = null;
                     }
                 };

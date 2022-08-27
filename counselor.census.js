@@ -79,6 +79,8 @@ module.exports = function(){
                 filter: object => object.hits < object.hitsMax
             });
 
+            repairArray.sort((a, b) => a.hits - b.hits)
+
             var reapirIDArray = common.reutrnIDsFromArray(repairArray);
 
             var spawnNameArrray = [];
@@ -129,7 +131,7 @@ module.exports = function(){
             var territoryObject = {};
             var imperialOrder = {type: "none"};
             if (Memory.census){
-                if (Memory.census.queenObject[name]){
+                if (Memory.census.queenObject[name] && Memory.census.queenObject[name].imperialOrder){
                     if (Object.keys(Memory.census.queenObject[name].imperialOrder).length === 0){
                         var imperialOrder = {type: "none"};
                     }

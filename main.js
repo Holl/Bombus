@@ -35,4 +35,5 @@ module.exports.loop = function () {
         " in the bucket, with " + Game.cpu.tickLimit + 
         " as the current tick limit.");
     db.vLog("Final CPU used = " + Game.cpu.getUsed());
+    db.vLog(" ");
 }

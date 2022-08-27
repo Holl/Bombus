@@ -16,6 +16,9 @@ module.exports = function(){
                 if (queenObject[queen].storage && queenObject[queen].energyMax >= 1300){
                     Memory.census.queenObject[queen].imperialOrder.type = "expand";
                     Memory.census.queenObject[queen].imperialOrder.potentialTerritory = potentialTerritoryScan(queen, 25);
+                    if(Memory.census.queenObject[queen].territoryObject){
+                        Memory.census.queenObject[queen].territoryObject = {};
+                    }
                     levelCount--;
                 }
             }
@@ -23,13 +26,27 @@ module.exports = function(){
                 if (Memory.census.queenObject[queen].territoryObject){
                     var territory = Memory.census.queenObject[queen].territoryObject;
                     for (var room in territory){
-                        if (territory[room].spawnLoc){
+                        if (territory[room].spawnLoc && territory[room] == false){
                             Memory.census.queenObject[queen].imperialOrder.type = "capture";
                             Memory.census.queenObject[queen].imperialOrder.target = room;
                         }
                     }
                 }
                 levelCount--;
+            }
+            else if (Memory.census.queenObject[queen].imperialOrder.type == "expand" && Memory.census.queenObject[queen].imperialOrder.potentialTerritory.length == 0){
+                var territory = Memory.census.queenObject[queen].territoryObject;
+                var fallBool = 1;
+                for (var room in territory){
+                    if (territory[room].spawnLoc && !territory[room] == false){
+                        Memory.census.queenObject[queen].imperialOrder.type = "sack";
+                        Memory.census.queenObject[queen].imperialOrder.target = room;
+                        fallBool = 0;
+                    }
+                }
+                if (fallBool){
+                    Memory.census.queenObject[queen].imperialOrder.type = "fall";
+                }
             }
             else if (Memory.census.queenObject[queen].imperialOrder.type == "capture"){
                 var target = Memory.census.queenObject[queen].imperialOrder.target;

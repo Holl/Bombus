@@ -31,7 +31,7 @@ module.exports = {
 	    }
 		else{
 			// bee.moveTo(bee.room.controller);
-			bee.signController(bee.room.controller, "Reworking code from scratch.  Really quite harmless.");
+			bee.signController(bee.room.controller, "Bombus AI");
 		}
 	},
 	findContainerIDFromSource(sourceID){

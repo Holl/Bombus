@@ -84,7 +84,7 @@ module.exports = function(queenName){
   
     runarchitect(queenName);
 
-    if (Memory.census.queenObject[queenName].hostilePower > 1){
+    if (Memory.census.queenObject[queenName].hostilePower >= 0){
         defenseFunction(queenName);
     }
     
