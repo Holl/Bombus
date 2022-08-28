@@ -26,7 +26,7 @@ module.exports = function(){
                 if (Memory.census.queenObject[queen].territoryObject){
                     var territory = Memory.census.queenObject[queen].territoryObject;
                     for (var room in territory){
-                        if (territory[room].spawnLoc && territory[room] == false){
+                        if (territory[room].spawnLoc && territory[room].owner == false){
                             Memory.census.queenObject[queen].imperialOrder.type = "capture";
                             Memory.census.queenObject[queen].imperialOrder.target = room;
                         }
