@@ -204,7 +204,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
             return true;
         }
     }
-    noUpgraders = 2;
+    noUpgraders = 1;
     if (storage){
         var storEng = Game.getObjectById(storage).store.energy;
         if (storEng > 250000){
@@ -438,8 +438,10 @@ function determineQueenPhase(queenName){
     if (storage){
         storEng = Game.getObjectById(storage).store.energy
     }
-
-    if (queenLevel >= 4 && storEng > 10000){
+    if (Memory.census.queenObject[queenName].imperialOrder.type == "fall"){
+        return "fall";
+    }
+    else if (queenLevel >= 4 && storEng > 10000){
         return "summer";
     }
     else{

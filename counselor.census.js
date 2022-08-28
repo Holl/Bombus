@@ -152,9 +152,7 @@ module.exports = function(){
                         territoryObject = Memory.census.queenObject[name].territoryObject;
                     }
                 }
-            }
-
-    
+            }      
             // And add it to the object:
 			queenObject[name] = {
                 "imperialOrder": imperialOrder,
@@ -197,7 +195,7 @@ module.exports = function(){
     }
 
     var harvestedSourcesArray = [];
-
+    var swarmArray = [];
 
 	for (var creep in Game.creeps){
         var bee = Game.creeps[creep];
@@ -330,13 +328,22 @@ module.exports = function(){
 			freeBeeArray.push(creep);
 		}
 
-    
+        if (Game.creeps[creep].memory.swarmId){
+            var id = Game.creeps[creep].memory.swarmId;
+            if (swarmArray[id]){
+                swarmArray[id].push(creep);
+            }
+            else{
+                sarmArray[id] = [creep];
+            }
+        }
     };
 
     // Build and return this object so the empress and queens can take a look.
 
     empireObject['gcl'] = Game.gcl;
     empireObject['freeBee'] = freeBeeArray;
+    empireObject['swarmArray'] = swarmArray;
 
     censusObject = {empireObject, queenObject};
 
