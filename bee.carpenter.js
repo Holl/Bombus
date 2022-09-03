@@ -43,18 +43,23 @@ module.exports = function(queenName, queenObj){
         else{
             if (ourBee.memory.repairTarget){
                 var storedTarget = Game.getObjectById(ourBee.memory.repairTarget);
-                if (storedTarget.hits < storedTarget.hitsMax){
-                    ourBee.moveTo(storedTarget, {});
-                    ourBee.repair(storedTarget);
+                if (storedTarget){
+                    if (storedTarget.hits < storedTarget.hitsMax){
+                        ourBee.moveTo(storedTarget, {});
+                        ourBee.repair(storedTarget);
+                    }
+                    else{
+                        if (repairArray.length > 0 && repairArray[0]){
+                            ourBee.memory.repairTarget = repairArray[0];
+                            repairArray.splice(0,1);
+                        }  
+                        else{
+                            ourBee.memory.repairTarget = '';
+                        }
+                    }
                 }
                 else{
-                    if (repairArray.length > 0 && repairArray[0]){
-                        ourBee.memory.repairTarget = repairArray[0];
-                        repairArray.splice(0,1);
-                    }  
-                    else{
-                        ourBee.memory.repairTarget = '';
-                    }
+                    ourBee.memory.repairTarget = '';
                 }
             }
             else if (ourBee.memory.constructionId){

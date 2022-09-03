@@ -22,7 +22,7 @@ module.exports = function(){
                     levelCount--;
                 }
             }
-            else if (Memory.census.queenObject[queen].imperialOrder.type == "expand"){
+            else if (Memory.census.queenObject[queen].imperialOrder.type == "expand" && Memory.census.queenObject[queen].imperialOrder.potentialTerritory.length > 0){
                 if (Memory.census.queenObject[queen].territoryObject){
                     var territory = Memory.census.queenObject[queen].territoryObject;
                     for (var room in territory){

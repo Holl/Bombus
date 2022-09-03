@@ -36,4 +36,9 @@ module.exports.loop = function () {
         " as the current tick limit.");
     db.vLog("Final CPU used = " + Game.cpu.getUsed());
     db.vLog(" ");
+
+    if(Game.cpu.bucket == 10000) {
+        Game.cpu.generatePixel();
+        db.vLog("Buring bucket to generate a pixel.");
+    }
 }
