@@ -56,7 +56,6 @@ module.exports = function(queenName){
         }
         else if (ourBee.memory.mission == "expand"){
             if (ourBee.memory.targetRoom){
-                console.log(ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom)));
                 if (ourBee.memory.targetRoom == currentRoomName){
                     ourBee.moveTo(25,25,ourBee.memory.targetRoom);
                     var data = common.scoutSnapshot(currentRoomName);
@@ -71,12 +70,29 @@ module.exports = function(queenName){
                     ourBee.memory.targetRoom = null;
                 }
                 else {
-                    if (ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom)) == ERR_NO_PATH){
-                        if(!Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName]){
-                            Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName] = false;
-                        }                   
+                    var territoryObject = Memory.census.queenObject[ourBee.memory.queen].territoryObject;
+                    var playerOwnedTerritory = [];
+                    for (var room in territoryObject){
+                        if (territoryObject[room].owner && territoryObject[room].owner !='KEVIN'){
+                            playerOwnedTerritory.push(room);
+                        }
+                    }
+                    var scoutingRoute = Game.map.findRoute(ourBee.room, ourBee.memory.targetRoom, {
+                        routeCallback(roomName, fromRoomName) {
+                            if(playerOwnedTerritory.indexOf(roomName) > -1) {    // avoid this room
+                                console.log("Avoiding " + roomName)
+                                return Infinity;
+                            }
+                            return 1;
+                        }
+                    });
+
+                    if (scoutingRoute == -2){
+                        console.log("No path.");
                         removeRoomWhenScouted(ourBee.memory.targetRoom, ourBee.memory.queen);
-                        ourBee.memory.targetRoom = null;
+                    }
+                    else{
+                        ourBee.moveTo(new RoomPosition(10,10,scoutingRoute[0].room), {visualizePathStyle: {stroke: 'white'}});
                     }
                 };
             }
