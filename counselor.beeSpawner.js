@@ -90,8 +90,7 @@ function getBody_Scout(level){
         case 1: return [MOVE];
         case 2: return [MOVE, TOUGH];
         case 3: return [MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
-        case 4: return [TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH, TOUGH, TOUGH,TOUGH,
-                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+        case 4: return [TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE];
     }
 }
 

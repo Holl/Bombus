@@ -334,7 +334,7 @@ module.exports = function(){
                 swarmArray[id].push(creep);
             }
             else{
-                sarmArray[id] = [creep];
+                swarmArray[id] = [creep];
             }
         }
     };

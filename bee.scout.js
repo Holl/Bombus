@@ -68,6 +68,17 @@ module.exports = function(queenName){
                     }
                     removeRoomWhenScouted(currentRoomName, ourBee.memory.queen);
                     ourBee.memory.targetRoom = null;
+                } else if (!(currentRoomName in Memory.census.queenObject[ourBee.memory.queen].territoryObject) && Memory.census.queenObject[ourBee.memory.queen].imperialOrder.potentialTerritory.includes(currentRoomName)){
+                    ourBee.moveTo(25,25);
+                    var data = common.scoutSnapshot(currentRoomName);
+                    if(!Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName]){
+                        Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName] = data;
+                        if (data.sources.length == 2){
+                            var center = common.findCenterSpawnLocation(currentRoomName);
+                            Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName].spawnLoc = center;
+                        }
+                    }
+                    removeRoomWhenScouted(currentRoomName, ourBee.memory.queen);
                 }
                 else {
                     var territoryObject = Memory.census.queenObject[ourBee.memory.queen].territoryObject;
@@ -80,7 +91,6 @@ module.exports = function(queenName){
                     var scoutingRoute = Game.map.findRoute(ourBee.room, ourBee.memory.targetRoom, {
                         routeCallback(roomName, fromRoomName) {
                             if(playerOwnedTerritory.indexOf(roomName) > -1) {    // avoid this room
-                                console.log("Avoiding " + roomName)
                                 return Infinity;
                             }
                             return 1;
@@ -88,8 +98,14 @@ module.exports = function(queenName){
                     });
 
                     if (scoutingRoute == -2){
-                        console.log("No path.");
+                        db.vLog("No way to " + ourBee.memory.targetRoom);
                         removeRoomWhenScouted(ourBee.memory.targetRoom, ourBee.memory.queen);
+                        ourBee.memory.targetRoom = null;
+                    }
+                    else if (scoutingRoute.length > 5){
+                        db.vLog("Too long of apath to " + ourBee.memory.targetRoom);
+                        removeRoomWhenScouted(ourBee.memory.targetRoom, ourBee.memory.queen);
+                        ourBee.memory.targetRoom = null;
                     }
                     else{
                         ourBee.moveTo(new RoomPosition(10,10,scoutingRoute[0].room), {visualizePathStyle: {stroke: 'white'}});
