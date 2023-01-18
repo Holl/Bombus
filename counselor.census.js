@@ -1,5 +1,5 @@
 var db = require('tools.debug');
-var common = require('tools.commonFunctions')
+var common = require('tools.commonFunctions');
 
 module.exports = function(){
 
@@ -340,6 +340,19 @@ module.exports = function(){
     };
 
     // Build and return this object so the empress and queens can take a look.
+
+    if (Memory['census']['empireObject']['warTargets']){
+        empireObject['warTargets'] = Memory['census']['empireObject']['warTargets'];
+    }
+    else{
+        empireObject['warTargets'] = {};
+    }
+    if (Memory['census']['empireObject']['liveAttacks']){
+        empireObject['liveAttacks'] = Memory['census']['empireObject']['liveAttacks'];
+    }
+    else{
+        empireObject['liveAttacks'] = [];
+    }
 
     empireObject['gcl'] = Game.gcl;
     empireObject['freeBee'] = freeBeeArray;

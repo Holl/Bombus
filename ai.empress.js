@@ -1,3 +1,5 @@
+const { attackSnapshot } = require("./tools.commonFunctions");
+
 module.exports = function(){
 
     if (!Memory || !Memory.census){
@@ -9,6 +11,7 @@ module.exports = function(){
     var queenCount = Object.keys(queenObject).length;
     
     var levelCount = empireObject.gcl.level;
+    var fallQueens = [];
 
     for (var queen in queenObject){
         if (queenCount < levelCount){
@@ -35,18 +38,11 @@ module.exports = function(){
                 levelCount--;
             }
             else if (Memory.census.queenObject[queen].imperialOrder.type == "expand" && Memory.census.queenObject[queen].imperialOrder.potentialTerritory.length == 0){
-                var territory = Memory.census.queenObject[queen].territoryObject;
-                var fallBool = 1;
-                for (var room in territory){
-                    if (territory[room].spawnLoc && !territory[room].owner == false){
-                        Memory.census.queenObject[queen].imperialOrder.type = "sack";
-                        Memory.census.queenObject[queen].imperialOrder.target = room;
-                        fallBool = 0;
-                    }
-                }
-                if (fallBool){
-                    Memory.census.queenObject[queen].imperialOrder.type = "fall";
-                }
+                Memory.census.queenObject[queen].imperialOrder.type = "fall";
+            }
+            else if (Memory.census.queenObject[queen].imperialOrder.type == "fall"){
+                fallQueens.push(queen);
+                Memory.census.queenObject[queen].imperialOrder.type = "sack";
             }
             else if (Memory.census.queenObject[queen].imperialOrder.type == "capture"){
                 var target = Memory.census.queenObject[queen].imperialOrder.target;
@@ -58,6 +54,38 @@ module.exports = function(){
             }
         }
     }
+    if (false){
+        Memory.census.empireObject.liveAttacks[0]= {
+            "room": "W56N43",
+            "type": "drain"
+        }
+        if (attackType == "drain"){
+            var swarmSize = 3;
+            var swarmNo = 2;
+            var fallQueenCount = 0;
+            Memory.census.empireObject.liveAttacks[0].beesOnDeck = {
+                "alpha": ["tank", "healer", "healer"],
+                "beta": ["tank", "healer", "healer"]
+            }
+        }
+    }
+
+    var liveAttacks =  Memory.census.empireObject.liveAttacks;
+    // if (liveAttacks.length > 0){
+    //     var currentAttack = liveAttacks[0];
+    //     var attackType = currentAttack.type;
+    //     var attackTarget = currentAttack.room;
+    //     var sortedQueenArray = sortRoomsByClosest(attackTarget, fallQueens);
+    //     if (attackType == "drain"){
+    //         var swarmSize = 3;
+    //         var swarmNo = 2;
+    //         var fallQueenCount = 0;
+    //         Memory.census.empireObject.liveAttacks[0].beesOnDeck = [
+    //             "tank", "healer", "healer", "tank", "healer", "healer"
+    //         ]
+    //     }
+    // }
+
 }
 
 function potentialTerritoryScan(roomName, territorySize){
@@ -82,4 +110,12 @@ function potentialTerritoryScan(roomName, territorySize){
         }
     }
     return potentialTerritoryArray;
+}
+
+function sortRoomsByClosest(attackTarget, queenArray){
+    return queenArray.sort(function(a, b){
+        var route1 = Game.map.findRoute(attackTarget, a);
+        var route2 = Game.map.findRoute(attackTarget, b);
+        return route1.length-route2.length;
+    })
 }

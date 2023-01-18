@@ -11,12 +11,15 @@ module.exports = function(spawnName, roleName, creepLevel, queenName, metaData){
     switch (spawning){
         case 0: 
             db.vLog("Spawning " + roleName);
+            return true;
             break;
         case ERR_NOT_ENOUGH_RESOURCES: 
             db.vLog("Not enough resources for " + roleName);
+            return false;
             break;
         case -10:
             db.vLog("Something wrong with trying to build " + roleName);
+            return false;
     }
 }
 
@@ -35,6 +38,8 @@ function getBody(role, level){
         case "drone": return getBody_Collector(level);
         case "captor": return getBody_Capture(level);
         case "captorBuilder": return getBody_CaptorBuilder(level);
+        case "tank": return getBody_Tank(level);
+        case "healer": return getBody_Healer(level);
     }
 }
 
@@ -91,6 +96,22 @@ function getBody_Scout(level){
         case 2: return [MOVE, TOUGH];
         case 3: return [MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
         case 4: return [TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE];
+    }
+}
+
+function getBody_Tank(level){
+    switch (level){
+        case 4: return [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, 
+                        TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, 
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, 
+                        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE ];
+    }
+}
+
+function getBody_Healer(level){
+    switch (level){
+        case 4: return [HEAL, HEAL, HEAL, HEAL, 
+                        MOVE, MOVE, MOVE, MOVE];
     }
 }
 

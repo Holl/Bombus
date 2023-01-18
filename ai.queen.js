@@ -46,8 +46,17 @@ module.exports = function(queenName){
         db.vLog("Bee level is " + beeLevel);
 
         var spawnCheck = false;
+        var imperialAttack = false;
+        if (Memory.census.empireObject.liveAttacks){
+            if (Memory.census.empireObject.liveAttacks.length>0){
+                imperialAttack = true;
+            }
+        }
 
         spawnCheck = normalEconomySpawning(queenName, beeLevel, phase);
+        if (!spawnCheck && imperialAttack){
+            spawnCheck = imperialAttackSpawning(queenName, beeLevel, phase);
+        }
         if (!spawnCheck){
             spawnCheck = maintenanceSpawning(queenName, beeLevel, phase);
         }
@@ -275,6 +284,21 @@ function maintenanceSpawning(queenName, beeLevel, phase){
     return false;
 }
 
+function imperialAttackSpawning(queenName, beeLevel, phase){
+    var deckBee = Memory.census.empireObject.liveAttacks[0].beesOnDeck[0];
+    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+    var created = creepCreator(           inactiveSpawn, 
+                            deckBee, 
+                            beeLevel,
+                            queenName
+    );
+    console.log("is it created?")
+    console.log(created)
+    if (created){
+        Memory.census.empireObject.liveAttacks[0].beesOnDeck.shift();
+    }
+}
+
 function scoutSpawning(queenName, beeLevel, phase){
     var scoutArray = Memory.census.queenObject[queenName].bees.scout;
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
@@ -454,7 +478,6 @@ function defenseFunction(queenName){
         var hostiles = Game.rooms[queenName].find(FIND_HOSTILE_CREEPS);
         if(hostiles.length > 0) {
             var username = hostiles[0].owner.username; 
-            console.log(username != 'staxwell' && username != 'Huggable_Shark');
             if (username != 'staxwell'){ 
                 // Game.notify(`User ${username} spotted in room ${queenName}`);
             } 

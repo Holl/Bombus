@@ -7,7 +7,6 @@ module.exports = {
 
 		for (build in roomStruct){
 			if (roomStruct[build].owner != "KEVIN"){
-				console.log(roomStruct[build].destroy());
 				roomStruct[build].destroy();
 			}
 		}
@@ -173,6 +172,66 @@ module.exports = {
 			"owner":owner,
 			"deposits":deposits
 		}
+	},
+	attackSnapshot(beeName){
+		var bee = Game.creeps[beeName];
+		var room = bee.room;
+		var controller = room.controller;
+		var roomLevel = 0;
+		if (controller.level){
+			roomLevel = controller.level;
+		}
+
+		var spawns = bee.room.find(FIND_STRUCTURES, {
+			filter: (structure) => {
+				return (structure.structureType == STRUCTURE_SPAWN)
+			}
+		});
+		var towers = bee.room.find(FIND_STRUCTURES, {
+			filter: (structure) => {
+				return (structure.structureType == STRUCTURE_TOWER)
+			}
+		});
+		var extensions = bee.room.find(FIND_STRUCTURES, {
+			filter: (structure) => {
+				return (structure.structureType == STRUCTURE_EXTENSION)
+			}
+		});
+		var storage = bee.room.find(FIND_STRUCTURES, {
+			filter: (structure) => {
+				return (structure.structureType == STRUCTURE_STORAGE)
+			}
+		});
+
+		var spawnPathable = null;
+		var towerPathable = null;
+		var extensionPathable = null;
+		var storagePathable = null;
+		var storageAmount = null;
+		var distanceToTower = null;
+
+		if (spawns.length > 0){
+			spawnPathable = canWePathToTarget(bee.pos, spawns[0].pos);
+		}
+		if (towers.length > 0){
+			towerPathable = canWePathToTarget(bee.pos, towers[0].pos);
+		}
+		if (extensions.length > 0){
+			extensionPathable = canWePathToTarget(bee.pos, extensions[0].pos);
+		}
+		if (storage.length > 0){
+			storagePathable = canWePathToTarget(bee.pos, storage[0].pos);
+			storageAmount = storage[0]['store']['energy'];
+		}
+
+		return {
+			"room"				 : room.name,
+			"spawnPathable"      : spawnPathable,
+			"towerPathable"      : towerPathable,
+			"extensionPathable"  : extensionPathable,
+			"storagePathable"    : storagePathable,
+			"storageAmount"      : storageAmount
+		}
 	}
 }
 
@@ -235,5 +294,14 @@ function checkWallsAroundSpawn(x,y,terrain){
 	return true;
 }
 
-
+function canWePathToTarget(beePos, targetPos){
+	// Can we get to a target?
+	var pathToTarget = beePos.findPathTo(targetPos, {ignoreCreeps: true});
+	if (pathToTarget[pathToTarget.length - 1]['x'] == targetPos['x'] && pathToTarget[pathToTarget.length - 1]['y'] == targetPos['y']){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 

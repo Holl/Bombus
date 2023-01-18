@@ -66,6 +66,10 @@ module.exports = function(queenName){
                             Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName].spawnLoc = center;
                         }
                     }
+                    if (data.owner != "KEVIN" && data.owner != false && data.owner != null){
+                        var attackData = common.attackSnapshot(ourBee.name);
+                        Memory.census.empireObject.warTargets[currentRoomName] = attackData;
+                    }
                     removeRoomWhenScouted(currentRoomName, ourBee.memory.queen);
                     ourBee.memory.targetRoom = null;
                 } else if (!(currentRoomName in Memory.census.queenObject[ourBee.memory.queen].territoryObject) && Memory.census.queenObject[ourBee.memory.queen].imperialOrder.potentialTerritory.includes(currentRoomName)){
@@ -77,6 +81,10 @@ module.exports = function(queenName){
                             var center = common.findCenterSpawnLocation(currentRoomName);
                             Memory.census.queenObject[ourBee.memory.queen].territoryObject[currentRoomName].spawnLoc = center;
                         }
+                    }
+                    if (data.owner != "KEVIN" && data.owner != false && data.owner != null){
+                        var attackData = common.attackSnapshot(ourBee.name);
+                        Memory.census.empireObject.warTargets[currentRoomName] = attackData;
                     }
                     removeRoomWhenScouted(currentRoomName, ourBee.memory.queen);
                 }
