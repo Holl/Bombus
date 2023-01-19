@@ -57,17 +57,19 @@ module.exports = function(){
     if (false){
         Memory.census.empireObject.liveAttacks[0]= {
             "room": "W56N43",
-            "type": "drain"
+            "type": "drain",
+            "prepRoom": "W57N43",
+            "prepRoomRally": {"x":46,"y":29}
         }
-        if (attackType == "drain"){
-            var swarmSize = 3;
-            var swarmNo = 2;
-            var fallQueenCount = 0;
-            Memory.census.empireObject.liveAttacks[0].beesOnDeck = {
-                "alpha": ["tank", "healer", "healer"],
-                "beta": ["tank", "healer", "healer"]
-            }
-        }
+        var swarmSize = 3;
+        var swarmNo = 2;
+        var fallQueenCount = 0;
+        Memory.census.empireObject.liveAttacks[0].beesOnDeck = [
+            { "swarmName": "alpha", 
+                "swarmBees": ["tank", "healer", "healer"]},
+            { "swarmName": "beta", 
+                "swarmBees": ["tank", "healer", "healer"]},
+        ]
     }
 
     var liveAttacks =  Memory.census.empireObject.liveAttacks;

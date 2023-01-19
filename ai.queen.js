@@ -285,18 +285,28 @@ function maintenanceSpawning(queenName, beeLevel, phase){
 }
 
 function imperialAttackSpawning(queenName, beeLevel, phase){
-    var deckBee = Memory.census.empireObject.liveAttacks[0].beesOnDeck[0];
-    var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
-    var created = creepCreator(           inactiveSpawn, 
-                            deckBee, 
-                            beeLevel,
-                            queenName
-    );
-    console.log("is it created?")
-    console.log(created)
-    if (created){
-        Memory.census.empireObject.liveAttacks[0].beesOnDeck.shift();
+    var attackRoom = Memory.census.empireObject.liveAttacks[0].room;
+    var deckBees = Memory.census.empireObject.liveAttacks[0].beesOnDeck;
+    for (swarm in deckBees){
+        var swarmBees = deckBees[swarm].swarmBees;
+        if (swarmBees[0]){
+            var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+            var created = creepCreator(           inactiveSpawn, 
+                                    deckBees[swarm].swarmBees[0], 
+                                    beeLevel,
+                                    queenName,
+                                    {
+                                        "targetRoom": attackRoom,
+                                        "swarmName": deckBees[swarm].swarmName
+                                    }
+            );
+            if (created){
+                Memory.census.empireObject.liveAttacks[0].beesOnDeck[swarm].swarmBees.shift();
+            }
+            return true;
+        }
     }
+    return false;
 }
 
 function scoutSpawning(queenName, beeLevel, phase){

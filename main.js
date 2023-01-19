@@ -15,6 +15,7 @@ var commmon = require('tools.commonFunctions');
 var runCensus = require('counselor.census');
 var runQueen = require('ai.queen')
 var runEmpress =  require('ai.empress');
+var runCaptain =  require('counselor.captain');
 
 module.exports.loop = function () {
     db.vLog("~~~~~~~~~~~~~~~~| Tick: "+ Game.time+" |~~~~~~~~~~~~~~~~");
@@ -29,6 +30,8 @@ module.exports.loop = function () {
     for (var queenName in queenObjects){
     	runQueen(queenName);
     }
+
+    runCaptain();
 
     db.vLog("~~~~~~~~Final Log~~~~~~~~");
     db.vLog("Currently " + Game.cpu.bucket + 
