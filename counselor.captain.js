@@ -25,7 +25,10 @@ module.exports = function(){
 function swarmBeeFunction(beeName, attackInfo){
     var attackType = attackInfo.type;
     if (attackType == "drain"){
-        swarmAttack(beeName, attackInfo)
+        swarmAttack(beeName, attackInfo);
+    }
+    else if (attackType == "rush"){
+        rushAttach(beeName, attackInfo);
     }
 }
 
@@ -38,7 +41,7 @@ function swarmAttack(beeName, attackInfo){
     var prepRoomRally = attackInfo.prepRoomRally;
     if (role == "tank"){
         if (targetRoom == currentRoomName){
-            if (bee.hits < (bee.hitsMax/2)){
+            if (bee.hits < (bee.hitsMax*.6)){
                 bee.moveTo(new RoomPosition(prepRoomRally.x,prepRoomRally.y,prepRoom), {visualizePathStyle:{}});
             }
             else{
@@ -65,7 +68,6 @@ function swarmAttack(beeName, attackInfo){
             }
         }
         else{
-            console.log(prepRoom)
             bee.moveTo(new RoomPosition(prepRoomRally.x,prepRoomRally.y,prepRoom), {visualizePathStyle:{}});
         }
     }
@@ -78,7 +80,7 @@ function swarmAttack(beeName, attackInfo){
             });
             if (target){
                 if(bee.heal(target) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(target);
+                    bee.moveTo(new RoomPosition(prepRoomRally.x,prepRoomRally.y,prepRoom), {visualizePathStyle:{}});
                 }
             }
             else{
@@ -87,6 +89,41 @@ function swarmAttack(beeName, attackInfo){
         }
         else{
             bee.moveTo(new RoomPosition(prepRoomRally.x,prepRoomRally.y,prepRoom), {visualizePathStyle:{}});
+        }
+    }
+}
+
+function rush(beeName, attackInfo){
+    var targetRoom = attackInfo.room;
+    var bee = Game.creeps[beeName];
+    var role = bee.memory.role;
+    var currentRoomName = bee.room.name;
+    if (role == "rusher"){
+        if (targetRoom == currentRoomName){
+            var spawns = bee.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_SPAWN)
+                }
+            });
+            var towers = bee.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_TOWER)
+                }
+            });
+
+            if (spawns[0]){
+                if(creep.attack(spawns[0]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(spawns[0]);
+                }
+            }
+            else if (towers[0]){
+                if(creep.attack(towers[0]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(towers[0]);
+                }
+            }
+        }
+        else{
+            bee.moveTo(new RoomPosition(25,25,targetRoom), {visualizePathStyle:{stroke:'red'}});
         }
     }
 }

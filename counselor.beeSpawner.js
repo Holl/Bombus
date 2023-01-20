@@ -40,6 +40,7 @@ function getBody(role, level){
         case "captorBuilder": return getBody_CaptorBuilder(level);
         case "tank": return getBody_Tank(level);
         case "healer": return getBody_Healer(level);
+        case "rusher": return getBody_Rusher(level);
     }
 }
 
@@ -152,6 +153,19 @@ function getBody_CaptorBuilder(level){
                         CARRY, CARRY, CARRY,
                         WORK, WORK, WORK,
                         MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+                        ];
+    }
+}
+
+function getBody_Rusher(level){
+    switch (level){
+        case 3: return [
+                        ATTACK, ATTACK, ATTACK,
+                        MOVE, MOVE, MOVE
+                        ];
+        case 4: return [
+                        ATTACK, ATTACK, ATTACK, ATTACK, ATTACK,
+                        MOVE, MOVE, MOVE, MOVE, MOVE
                         ];
     }
 }
