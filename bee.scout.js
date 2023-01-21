@@ -115,8 +115,11 @@ module.exports = function(queenName){
                         removeRoomWhenScouted(ourBee.memory.targetRoom, ourBee.memory.queen);
                         ourBee.memory.targetRoom = null;
                     }
+                    else if (scoutingRoute.length >=1){
+                        ourBee.moveTo(new RoomPosition(25,25,scoutingRoute[1].room), {visualizePathStyle: {stroke: 'white'}});
+                    }
                     else{
-                        ourBee.moveTo(new RoomPosition(10,10,scoutingRoute[0].room), {visualizePathStyle: {stroke: 'white'}});
+                        ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom), {visualizePathStyle: {stroke: 'white'}});
                     }
                 };
             }

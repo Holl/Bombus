@@ -10,9 +10,9 @@ module.exports = function(){
                 if (liveAttacks[attack].room == targetRoom){
                     swarmBeeFunction(bee, liveAttacks[attack]);
                     if (Game.creeps[bee].ticksToLive == 50){
-                        for (swarm in Memory.census.empireObject.liveAttacks[0].beesOnDeck){
-                            if (Memory.census.empireObject.liveAttacks[0].beesOnDeck[swarm].swarmName == Game.creeps[bee].memory.swarmName){
-                                Memory.census.empireObject.liveAttacks[0].beesOnDeck[swarm].swarmBees.push(Game.creeps[bee].memory.role)
+                        for (swarm in Memory.census.empireObject.liveAttacks[attack].beesOnDeck){
+                            if (Memory.census.empireObject.liveAttacks[attack].beesOnDeck[swarm].swarmName == Game.creeps[bee].memory.swarmName){
+                                Memory.census.empireObject.liveAttacks[attack].beesOnDeck[swarm].swarmBees.push(Game.creeps[bee].memory.role)
                             }
                         }
                     }
@@ -28,7 +28,7 @@ function swarmBeeFunction(beeName, attackInfo){
         swarmAttack(beeName, attackInfo);
     }
     else if (attackType == "rush"){
-        rushAttach(beeName, attackInfo);
+        rushAttack(beeName, attackInfo);
     }
 }
 
@@ -93,12 +93,13 @@ function swarmAttack(beeName, attackInfo){
     }
 }
 
-function rush(beeName, attackInfo){
+function rushAttack(beeName, attackInfo){
     var targetRoom = attackInfo.room;
     var bee = Game.creeps[beeName];
     var role = bee.memory.role;
     var currentRoomName = bee.room.name;
     if (role == "rusher"){
+
         if (targetRoom == currentRoomName){
             var spawns = bee.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
@@ -110,16 +111,49 @@ function rush(beeName, attackInfo){
                     return (structure.structureType == STRUCTURE_TOWER)
                 }
             });
+            var extensions = bee.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_EXTENSION)
+                }
+            });
+            var storage = bee.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_STORAGE)
+                }
+            });
+            var everythingElse = bee.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,
+                {
+                    filter: { structureType: STRUCTURE_EXTENSION }
+                }
+            );
+
 
             if (spawns[0]){
-                if(creep.attack(spawns[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(spawns[0]);
+                console.log(spawns[0])
+                if(bee.attack(spawns[0]) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(spawns[0]);
                 }
             }
             else if (towers[0]){
-                if(creep.attack(towers[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(towers[0]);
+                console.log(towers[0])
+                if(bee.attack(towers[0]) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(towers[0]);
                 }
+            }
+            else if (extensions){
+                if(bee.attack(extensions) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(extensions);
+                }  
+            }
+            else if (storage){
+                if(bee.attack(storage) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(storage);
+                }  
+            }
+            else if (everythingElse){
+                if(bee.attack(everythingElse) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(everythingElse);
+                }   
             }
         }
         else{
