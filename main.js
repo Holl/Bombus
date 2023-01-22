@@ -40,7 +40,8 @@ module.exports.loop = function () {
     db.vLog("Final CPU used = " + Game.cpu.getUsed());
     db.vLog(" ");
 
-    if(Game.cpu.bucket == 10000) {
+    if(false) {
+        // Not doing this anymore- CPU too valuable.
         Game.cpu.generatePixel();
         db.vLog("Buring bucket to generate a pixel.");
     }

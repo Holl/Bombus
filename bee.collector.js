@@ -17,14 +17,19 @@ module.exports = function(queenName){
                 bee.memory.pickupID = common.findContainerIDFromSource(source.id);
             }
             var pickup = Game.getObjectById(bee.memory.pickupID);
-            if (bee.withdraw(pickup, RESOURCE_ENERGY)== ERR_NOT_IN_RANGE){
-                bee.moveTo(pickup.pos)
-            }
-            else if (bee.withdraw(pickup, RESOURCE_ENERGY)== ERR_INVALID_TARGET){
-                var target = pickup.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0];
-                if(bee.pickup(target) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(target.pos);
+            if (pickup){
+                if (bee.withdraw(pickup, RESOURCE_ENERGY)== ERR_NOT_IN_RANGE){
+                    bee.moveTo(pickup.pos)
                 }
+                else if (bee.withdraw(pickup, RESOURCE_ENERGY)== ERR_INVALID_TARGET){
+                    var target = pickup.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0];
+                    if(bee.pickup(target) == ERR_NOT_IN_RANGE) {
+                        bee.moveTo(target.pos);
+                    }
+                }
+            }
+            else{
+                console.log(bee.name)
             }
 
         }

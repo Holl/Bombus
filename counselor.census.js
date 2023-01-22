@@ -328,8 +328,8 @@ module.exports = function(){
 			freeBeeArray.push(creep);
 		}
 
-        if (Game.creeps[creep].memory.swarmId){
-            var id = Game.creeps[creep].memory.swarmId;
+        if (Game.creeps[creep].memory.swarmName){
+            var id = Game.creeps[creep].memory.swarmName;
             if (swarmArray[id]){
                 swarmArray[id].push(creep);
             }
