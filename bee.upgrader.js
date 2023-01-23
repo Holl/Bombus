@@ -58,6 +58,13 @@ module.exports = function(queenName){
         }
         else{
             common.upgradeController(bee);
+            var signer = "Bombus A.I. at work";
+            if (!(bee.room.controller.sign) || !(bee.room.controller.sign.text == signer)){
+                if(bee.signController(bee.room.controller, signer) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(bee.room.controller);
+                }
+            }
+            
         } 
     }
     
