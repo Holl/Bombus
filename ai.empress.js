@@ -86,6 +86,10 @@ module.exports = function(){
                 "swarmBees": ["rusher", "rusher", "rusher", "rusher", "rusher"]},
         ]
     }
+    if (false){
+        Memory.census.queenObject['W57N43'].imperialOrder.type = "capture";
+        Memory.census.queenObject['W57N43'].imperialOrder.target = 'W56N43';
+    }
 
     var liveAttacks =  Memory.census.empireObject.liveAttacks;
     // if (liveAttacks.length > 0){

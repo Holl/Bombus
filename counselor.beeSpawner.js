@@ -138,7 +138,7 @@ function getBody_Collector(level){
 function getBody_Capture(level){
     switch (level){
         case 3: return [CLAIM, MOVE];
-        case 4: return [CLAIM, MOVE];
+        case 4: return [CLAIM, CLAIM, MOVE, MOVE];
     }
 }
 
