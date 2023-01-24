@@ -1,0 +1,5 @@
+TODO:
+ - Empress decision making to set a room as a sacking target
+ - attackController() logic for running down the clock
+ - remote harvesting
+ 

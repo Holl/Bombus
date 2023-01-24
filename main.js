@@ -34,9 +34,17 @@ module.exports.loop = function () {
     runCaptain();
 
     db.vLog("~~~~~~~~Final Log~~~~~~~~");
-    db.vLog("Currently " + Game.cpu.bucket + 
-        " in the bucket, with " + Game.cpu.tickLimit + 
-        " as the current tick limit.");
+    var bucketBar = '[';
+    var bucketPercentage = Math.round(Game.cpu.bucket/100);
+    var bucketLeftovers = 100 - bucketPercentage;
+    for (var i=0; i<bucketPercentage; i++){
+        bucketBar+="#"
+    }
+    for (var i=0; i<bucketLeftovers; i++){
+        bucketBar+=" "
+    }
+    bucketBar+="] " + Game.cpu.bucket + " / 10,000 Bucket CPU";
+    db.vLog(bucketBar);
     db.vLog("Final CPU used = " + Game.cpu.getUsed());
     db.vLog(" ");
 
