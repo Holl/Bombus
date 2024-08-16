@@ -10,7 +10,9 @@ module.exports = function(){
     var queenObject = Memory.census.queenObject;
     var queenCount = Object.keys(queenObject).length;
     
-    var levelCount = empireObject.gcl.level;
+    // var levelCount = empireObject.gcl.level;
+    // Turn this back on when on a real server.
+    var levelCount = 7;
     var fallQueens = [];
 
     for (var queen in queenObject){
@@ -52,6 +54,9 @@ module.exports = function(){
                     }
                 }
             }
+        }
+        else{
+            // Memory.census.queenObject[queen].imperialOrder.type = "fall";
         }
     }
     if (false){

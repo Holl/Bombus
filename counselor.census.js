@@ -79,7 +79,16 @@ module.exports = function(){
                 filter: object => object.hits < object.hitsMax
             });
 
-            repairArray.sort((a, b) => a.hits - b.hits)
+            repairArray.sort((a, b) => a.hits - b.hits);
+
+            for (index in repairArray){
+                if(repairArray[index].structureType == STRUCTURE_ROAD){
+                    if (repairArray[index].hits > repairArray[index].hitsMax * .6){
+                        repairArray.splice(index, 1);
+                        index--;
+                    }
+                }
+            }
 
             var reapirIDArray = common.reutrnIDsFromArray(repairArray);
 

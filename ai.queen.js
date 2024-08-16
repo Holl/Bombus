@@ -39,6 +39,9 @@ module.exports = function(queenName){
     var energyMax = Memory.census.queenObject[queenName].energyMax;
 
     var order = Memory.census.queenObject[queenName].imperialOrder.type;
+    if (order){
+        db.vLog("Imperial Order type "+ order);
+    }
     
     if(inactiveSpawns.length > 0){
 
@@ -63,7 +66,7 @@ module.exports = function(queenName){
         if (!spawnCheck && phase == "summer" && order == "expand"){
             spawnCheck = scoutSpawning(queenName, beeLevel, phase);
         }
-        if (!spawnCheck && phase == "summer" && order == "capture"){
+        if (!spawnCheck && (phase == "summer" || phase == "fall") && order == "capture"){
             spawnCheck = captureSpawning(queenName, beeLevel, phase);
         }
         if (!spawnCheck && phase == "summer"){

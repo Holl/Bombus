@@ -68,6 +68,11 @@ module.exports = function(queenName, queenObj){
                     ourBee.moveTo(site);
                 }
                 else if(ourBee.build(site) == -7){
+                    if (site != null){
+                        if (site.structureType == STRUCTURE_RAMPART){
+                            ourBee.memory.repairTarget = ourBee.memory.constructionId;
+                        }
+                    }
                     ourBee.memory.constructionId = null;
                 }
 
