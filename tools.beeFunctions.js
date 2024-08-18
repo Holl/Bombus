@@ -31,8 +31,8 @@ module.exports = {
 
 	},
 	upgradeController(bee){
-	    if(bee.upgradeController(bee.room.controller) == ERR_NOT_IN_RANGE) {
-	        bee.moveTo(bee.room.controller);
+	    if(bee.upgradeController(bee.room.controller, {maxRooms: 1}) == ERR_NOT_IN_RANGE) {
+	        bee.moveTo(bee.room.controller, {maxRooms: 1});
 	    }
 	},
     mineSource(bee, source){

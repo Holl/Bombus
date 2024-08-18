@@ -19,11 +19,11 @@ module.exports = function(queenName){
             else if (bee.memory.pickupID){
                 var target = Game.getObjectById(bee.memory.pickupID);
                 if(bee.pickup(target) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(target.pos);
+                    bee.moveTo(target.pos, {maxRooms: 1});
                 }
                 else if(target && target.structureType == 'container'){
                      if (bee.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
-                        bee.moveTo(target.pos)
+                        bee.moveTo(target.pos, {maxRooms: 1})
                     }
                 }
                 else if (!target){
@@ -42,7 +42,7 @@ module.exports = function(queenName){
                         if (source){
                             var target = source.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0];
                             if(bee.pickup(target) == ERR_NOT_IN_RANGE) {
-                                bee.moveTo(target.pos);
+                                bee.moveTo(target.pos, {maxRooms: 1});
                             }
                             else if (!target){
                                 bee.memory.pickupID = common.findContainerIDFromSource(source.id); 
@@ -53,17 +53,19 @@ module.exports = function(queenName){
                 // This doesn't work pre storage, need a fix
             }
             if(bee.withdraw(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                bee.moveTo(storage);
+                bee.moveTo(storage, {maxRooms: 1});
             }
         }
         else{
             common.upgradeController(bee);
+            console.log("This?")
             var signer = "Bombus A.I. at work";
-            if (!(bee.room.controller.sign) || !(bee.room.controller.sign.text == signer)){
-                if(bee.signController(bee.room.controller, signer) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(bee.room.controller);
-                }
-            }
+            // if (!(bee.room.controller.sign) || !(bee.room.controller.sign.text == signer)){
+            //     console.log("And this?")
+            //     if(bee.signController(bee.room.controller, signer) == ERR_NOT_IN_RANGE) {
+            //         bee.moveTo(bee.room.controller, {maxRooms: 1});
+            //     }
+            // }
             
         } 
     }

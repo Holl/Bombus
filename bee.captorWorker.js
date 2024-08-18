@@ -26,7 +26,7 @@ module.exports = function(queenName){
 
             if(bee.memory.status == 'empty') {
                 if(bee.harvest(source) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
+                    bee.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}, maxRooms: 1});
                 }
                 else(bee.harvest(source));
             }
@@ -41,14 +41,14 @@ module.exports = function(queenName){
                 if (constructs && constructs.length > 0){
 
                     if(bee.build(constructs[0]) == ERR_NOT_IN_RANGE) {
-                        bee.moveTo(constructs[0], {visualizePathStyle: {stroke: '#ffffff'}});
+                        bee.moveTo(constructs[0], {visualizePathStyle: {stroke: '#ffffff'}, maxRooms: 1});
                     }
                 }
                 else if(bee.memory.deliveryTargetID){
                     var deliveryID = bee.memory.deliveryTargetID;
                     var deliveryObj = Game.getObjectById(deliveryID);
                     if(bee.transfer(deliveryObj, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        bee.moveTo(deliveryObj);
+                        bee.moveTo(deliveryObj, {maxRooms: 1});
                     }
                     if(bee.transfer(deliveryObj, RESOURCE_ENERGY) == ERR_FULL){
                         bee.memory.deliveryTargetID = '';

@@ -28,12 +28,12 @@ module.exports = function(queenName){
                 if (pickup.progressTotal){
                     var target = source.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0];
                     if(bee.pickup(target) == ERR_NOT_IN_RANGE) {
-                        bee.moveTo(target.pos);
+                        bee.moveTo(target.pos, {maxRooms: 1});
                     }
                 }
                 else{
                     if (bee.withdraw(pickup, RESOURCE_ENERGY)== ERR_NOT_IN_RANGE){
-                        bee.moveTo(pickup.pos)
+                        bee.moveTo(pickup.pos, {maxRooms: 1})
                     }
                     else if (bee.withdraw(pickup, RESOURCE_ENERGY) == ERR_INVALID_TARGET){
                         bee.memory.pickupID = common.findContainerIDFromSource(source.id);
@@ -43,7 +43,7 @@ module.exports = function(queenName){
             else{
                 var target = source.pos.findInRange(FIND_DROPPED_RESOURCES,1)[0];
                 if(bee.pickup(target) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(target.pos);
+                    bee.moveTo(target.pos, {maxRooms: 1});
                 }
                 else if (!target){
                     bee.memory.pickupID = common.findContainerIDFromSource(source.id); 
@@ -58,7 +58,7 @@ module.exports = function(queenName){
                 var deliveryID = bee.memory.deliveryTargetID;
                 var deliveryObj = Game.getObjectById(deliveryID);
                 if(bee.transfer(deliveryObj, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    bee.moveTo(deliveryObj);
+                    bee.moveTo(deliveryObj, {maxRooms: 1});
                 }
                 if(bee.transfer(deliveryObj, RESOURCE_ENERGY) == ERR_FULL){
                     bee.memory.deliveryTargetID = '';
