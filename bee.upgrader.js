@@ -58,14 +58,12 @@ module.exports = function(queenName){
         }
         else{
             common.upgradeController(bee);
-            console.log("This?")
             var signer = "Bombus A.I. at work";
-            // if (!(bee.room.controller.sign) || !(bee.room.controller.sign.text == signer)){
-            //     console.log("And this?")
-            //     if(bee.signController(bee.room.controller, signer) == ERR_NOT_IN_RANGE) {
-            //         bee.moveTo(bee.room.controller, {maxRooms: 1});
-            //     }
-            // }
+            if (!(bee.room.controller.sign) || !(bee.room.controller.sign.text == signer)){
+                if(bee.signController(bee.room.controller, signer) == ERR_NOT_IN_RANGE) {
+                    bee.moveTo(bee.room.controller, {maxRooms: 1});
+                }
+            }
             
         } 
     }
