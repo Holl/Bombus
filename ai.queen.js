@@ -35,6 +35,7 @@ module.exports = function(queenName){
     db.vLog("Hostile power is currently " + queenObj['hostilePower'] +".");
     db.vLog("Currently "+queenObj["energyNow"]+" out of a possible "+queenObj["energyMax"]+ " energy.")
     var phase = determineQueenPhase(queenName);
+    db.vLog("Current phase is " + phase);
     var inactiveSpawns = Memory.census.queenObject[queenName].inactiveSpawns;
     var energyMax = Memory.census.queenObject[queenName].energyMax;
 
@@ -55,7 +56,6 @@ module.exports = function(queenName){
                 imperialAttack = true;
             }
         }
-
         spawnCheck = normalEconomySpawning(queenName, beeLevel, phase);
         if (!spawnCheck && imperialAttack){
             spawnCheck = imperialAttackSpawning(queenName, beeLevel, phase);
@@ -371,8 +371,8 @@ function captureSpawning(queenName, beeLevel, phase){
 
     var captureArray = Memory.census.queenObject[queenName].bees.captor;
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
+    db.str(captureArray);
     if(typeof captureArray == 'undefined'){
-        db.vLog("Spawning Captor.");
         creepCreator(inactiveSpawn, 
                                     'captor', 
                                     beeLevel,
@@ -384,7 +384,6 @@ function captureSpawning(queenName, beeLevel, phase){
     var captorBuilderArray = Memory.census.queenObject[queenName].bees.captorBuilder;
     if (typeof captorBuilderArray == 'undefined' ||
     captorBuilderArray.length < 4){
-        db.vLog("Spawning Captor Builder.");
         creepCreator(inactiveSpawn, 
                                     'captorBuilder', 
                                     beeLevel,

@@ -362,6 +362,12 @@ module.exports = function(){
     else{
         empireObject['liveAttacks'] = [];
     }
+    if (Memory['census']['empireObject']['dangerousRooms']){
+        empireObject['dangerousRooms'] = Memory['census']['empireObject']['dangerousRooms'];
+    }
+    else{
+        empireObject['dangerousRooms'] = [];
+    }
 
     empireObject['gcl'] = Game.gcl;
     empireObject['freeBee'] = freeBeeArray;

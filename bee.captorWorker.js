@@ -9,11 +9,11 @@ module.exports = function(queenName){
 
 
     var captorBuilder = Memory.census.queenObject[queenName].bees.captorBuilder;
-    for (var bee in captorBuilder){
+    for (var bee in captorBuilder){ 
         var beeName = captorBuilder[bee];
         var bee = Game.creeps[beeName];
         if(bee.room.name != bee.memory.targetRoom){
-            bee.moveTo(new RoomPosition(25, 25, bee.memory.targetRoom));
+            bee.moveByPath(beeFunc.pathAvoidingRooms(bee, bee.memory.targetRoom));
         }
         else{
             var source = bee.pos.findClosestByPath(FIND_SOURCES);

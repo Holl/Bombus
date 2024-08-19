@@ -13,7 +13,7 @@ module.exports = function(queenName){
         var beeName = captorArray[bee];
         var bee = Game.creeps[beeName];
         if(bee.room.name != bee.memory.targetRoom){
-            bee.moveTo(new RoomPosition(25, 25, bee.memory.targetRoom));
+            bee.moveByPath(beeFunc.pathAvoidingRooms(bee, bee.memory.targetRoom), {visualizePathStyle: {stroke: '#ffffff'}});
         }
         else{
             if(bee.room.controller) {
