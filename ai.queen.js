@@ -149,7 +149,7 @@ function normalEconomySpawning(queenName, beeLevel, phase){
 
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
 
-    if (phase == "summer" && droneArray == undefined){
+    if (storage && droneArray == undefined){
         creepCreator(inactiveSpawn, 
             'drone', 
             1,
@@ -371,7 +371,6 @@ function captureSpawning(queenName, beeLevel, phase){
 
     var captureArray = Memory.census.queenObject[queenName].bees.captor;
     var inactiveSpawn = Memory.census.queenObject[queenName].inactiveSpawns[0];
-    db.str(captureArray);
     if(typeof captureArray == 'undefined'){
         creepCreator(inactiveSpawn, 
                                     'captor', 

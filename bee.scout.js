@@ -116,7 +116,7 @@ module.exports = function(queenName){
                         ourBee.memory.targetRoom = null;
                     }
                     else if (scoutingRoute.length > 1){
-                        ourBee.moveTo(new RoomPosition(25,25,scoutingRoute[1].room), {visualizePathStyle: {stroke: 'white'}});
+                        ourBee.moveByPath(beeFunc.pathAvoidingRooms(ourBee, scoutingRoute[1].room))
                     }
                     else{
                         if(ourBee.moveTo(new RoomPosition(25,25,ourBee.memory.targetRoom), {visualizePathStyle: {stroke: 'white'}}) == -2){
